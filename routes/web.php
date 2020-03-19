@@ -43,6 +43,7 @@ Route::post('worker/update', 'WorkerController@updateWorker')->name('worker.upda
 Route::get('worker/lista', 'WorkerController@getListWorker')->name('worker.list');
 Route::post('worker/delete', 'WorkerController@deleteWorker')->name('worker.delete');
 Route::get('worker/only', 'WorkerController@onlyWorker')->name('worker.only');
+Route::get('worker/search', 'WorkerController@searchWorker')->name('worker.search');
 
 
 Route::get('user/validate', 'UserController@validateUser')->name('user.validate');
@@ -52,7 +53,19 @@ Route::get('user/validate', 'UserController@validateUser')->name('user.validate'
 // Route::post('proveedor/update', 'ProveedorController@updateClient')->name('proveedor.update');
 // Route::get('proveedor/lista', 'ProveedorController@getListProveedor')->name('proveedor.list');
 // Route::post('proveedor/delete', 'ProveedorController@deleteProveedor')->name('proveedor.delete');
+
+Route::get('permiso/menu', 'WorkerController@getListMenu');
+Route::get('permiso/permiso', 'WorkerController@getListMenuPermiso');
+Route::post('permiso/registrar', 'WorkerController@savePermiso')->name('permiso.save');
 //
+Route::get('cargo/cargo', 'WorkerController@getCargo');
+Route::post('cargo/save', 'WorkerController@saveCargo')->name('cargo.save');
+Route::post('cargo/update', 'WorkerController@updateCargo')->name('cargo.update');
+Route::get('cargo/lista', 'WorkerController@getListCargo')->name('cargo.list');
+Route::post('cargo/delete', 'WorkerController@deleteCargo')->name('cargo.delete');
+Route::get('cargo/only', 'WorkerController@onlyCargo')->name('cargo.only');
+Route::get('cargo/search', 'WorkerController@searchCargo')->name('cargo.search');
+
 
 Route::get('ubigeo/deparment', 'UbigeoController@getDeparment');
 Route::get('ubigeo/province', 'UbigeoController@getProvince')->name('ubigeo.province');

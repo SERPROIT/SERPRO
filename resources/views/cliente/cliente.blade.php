@@ -236,11 +236,8 @@
                 var lista = [];
 
                 $.each(data, function (i, data) {
-                    
                     var option = {id:data.id,text:data.nombre}
-
                     lista[i] = option
-                   
                 });
                 
                 $('#cmbDepartamento').select2({ data: lista });

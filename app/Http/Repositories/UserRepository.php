@@ -15,7 +15,7 @@ class UserRepository
      */
     public function validateUser($usuario,$password)
     {
-        $usuario = DB::select('select id,usuario, password, nombre, correo, telefono, direccion, vigencia from usuario where usuario = ? and password = ? and estado = 1 and vigencia =1',[$usuario,$password]); 
+        $usuario = DB::select('select id,usuario, password, nombre, correo, telefono, direccion, vigencia from usuario where usuario = ? and password = ? and estado = 1 and vigencia =1 ',[$usuario,$password]); 
              
         return $usuario;
 
