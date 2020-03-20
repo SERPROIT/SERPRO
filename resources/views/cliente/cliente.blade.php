@@ -4,12 +4,22 @@
     <script src="{{asset('js/global_assets/plugins/tables/datatables/datatables.min.js')}}"></script>
     <script src="{{asset('js/global_assets/plugins/tables/datatables/extensions/fixed_columns.min.js')}}"></script>
 
+    <script src="{{asset('js/global_assets/plugins/notifications/sweet_alert.min.js')}}"></script>
+    <script src="{{asset('js/global_assets/plugins/forms/selects/bootstrap_multiselect.js')}}"></script>
+
     <script src="{{asset('js/global_assets/plugins/extensions/jquery_ui/interactions.min.js')}}"></script>
     <script src="{{asset('js/global_assets/plugins/forms/selects/select2.min.js')}}"></script>
     <script src="{{asset('js/global_assets/demo_pages/form_select2.js')}}"></script>
     
-  
+    <!-- <script src="{{asset('js/global_assets/plugins/forms/styling/uniform.min.js')}}"></script>
+    <script src="{{asset('js/global_assets/plugins/forms/styling/switchery.min.js')}}"></script>
+    <script src="{{asset('js/global_assets/plugins/forms/styling/switch.min.js')}}"></script>
+    <script src="{{asset('js/global_assets/demo_pages/form_checkboxes_radios.js')}}"></script> -->
+
     <script src="{{asset('js/global_assets/demo_pages/datatables_extension_fixed_columns.js')}}"></script>
+
+    <script src="{{asset('js/global_assets/demo_pages/extra_sweetalert.js')}}"></script>
+   
 @stop
 
 
@@ -30,6 +40,32 @@
                         </div>
                     </div>
 
+                    <div class="form-group row">
+                        <label class="col-form-label col-lg-2">FECHA INGRESO</label>
+                        <div class="col-lg-10">
+                            <input type="date" name="fechaingreso" class="form-control">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-lg-2">PUBLICIDAD</label>
+                        <div class="col-lg-10">
+                            <select id="cmbPublicidad"  data-placeholder="Publicidad" class="form-control select-search" data-fouc>
+                             </select>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-lg-2">PROGRAMACION VISITA</label>
+                        <div class="col-lg-10">
+                            <input type="text" name="nombres" class="form-control" placeholder="Ingresar Programacion Visita">
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label class="col-form-label col-lg-2">TIPO CLIENTE</label>
+                        <div class="col-lg-10">
+                            <select id="cmbTipoCliente"  data-placeholder="Tipo Cliente" class="form-control select-search" data-fouc>
+                             </select>
+                        </div>
+                    </div>
                     <div class="form-group row">
                         <label class="col-form-label col-lg-2">DEPARTAMENTO</label>
                         <div class="col-lg-10">
@@ -242,6 +278,50 @@
                 
                 $('#cmbDepartamento').select2({ data: lista });
                 getProvince($('#cmbDepartamento').val());
+            },
+            error:function(data){
+                console.log(data);
+            }
+        });
+
+        //LISTA PUBLICIDAD
+        $.ajax({    
+            type: 'GET',
+            url: "{{  route('publicidad.list') }}",
+            datatype: 'JSON',
+            success:function(data){
+
+                var lista = [];
+
+                $.each(data, function (i, data) {
+                    var option = {id:data.id,text:data.nombre}
+                    lista[i] = option
+                });
+                
+                $('#cmbPublicidad').select2({ data: lista });
+                
+            },
+            error:function(data){
+                console.log(data);
+            }
+        });
+
+        //LISTA TIPO CLIENTE
+        $.ajax({    
+            type: 'GET',
+            url: "{{  route('tipocliente.list') }}",
+            datatype: 'JSON',
+            success:function(data){
+
+                var lista = [];
+
+                $.each(data, function (i, data) {
+                    var option = {id:data.id,text:data.nombre}
+                    lista[i] = option
+                });
+                
+                $('#cmbTipoCliente').select2({ data: lista });
+                
             },
             error:function(data){
                 console.log(data);

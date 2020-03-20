@@ -37,6 +37,9 @@ Route::post('client/update', 'ClientController@updateClient')->name('client.upda
 Route::get('client/lista', 'ClientController@getListClient')->name('client.list');
 Route::post('client/delete', 'ClientController@deleteClient')->name('client.delete');
 Route::get('client/only', 'ClientController@onlyClient')->name('client.only');
+Route::get('publicidad/lista', 'ClientController@getListPublicidad')->name('publicidad.list');
+Route::get('tipocliente/lista', 'ClientController@getListTipoCliente')->name('tipocliente.list');
+
 
 Route::post('worker/save', 'WorkerController@saveWorker')->name('worker.save');
 Route::post('worker/update', 'WorkerController@updateWorker')->name('worker.update');

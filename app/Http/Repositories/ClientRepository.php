@@ -21,6 +21,22 @@ class ClientRepository
 
     }
 
+    public function getListPublicidad()
+    {
+        $publicidad = DB::select('select id, nombre from publicidad where estado = 1');
+        
+        return $publicidad;
+
+    }
+
+    public function getListTipoCliente()
+    {
+        $tipocliente = DB::select('select id, nombre from tipocliente where estado = 1');
+        
+        return $tipocliente;
+
+    }
+
     public function saveClient($name, $iddepartment, $idprovince, $iddistrict, $addres, $phone, $status, $id){
          $client = DB::insert('insert into cliente (nombre,iddepartamento,idprovincia,iddistrito,direccion,telefono,estado) values (?,?,?,?,?,?,?)', [ $name, $iddepartment, $idprovince, $iddistrict, $addres, $phone, $status]);
         

@@ -43,9 +43,13 @@ class ClientController extends Controller
         $order_dir = $request->get('order')[0]['dir'];
         $order_col = $request->get('order')[0]['column'];
 
-         $members = $oCliente->getListClient($length,$start,$order_col,$order_dir,$search);
+        $members = $oCliente->getListClient($length,$start,$order_col,$order_dir,$search);
 
-        $total_members = $members[0]->TotalCount; 
+        if($members == null){
+            $total_members = 0; 
+        }else{
+            $total_members = $members[0]->TotalCount; 
+        }
 
         $data = array(
             'draw' => $draw,
@@ -53,7 +57,6 @@ class ClientController extends Controller
             'recordsFiltered' => $total_members,
             'data' => $members,
         );
-       
         
         return response()->json($data);
     }
@@ -80,7 +83,18 @@ class ClientController extends Controller
         $oUbigeo = new ClientRepository();
         $n = $oUbigeo->onlyClient($request->id);                 
         return response()->json($n);
+    
+    }
+    public function getListPublicidad(Request $request){
+        $oPublicidad = new ClientRepository();
+        $n = $oPublicidad->getListPublicidad();                 
+        return response()->json($n);
     }
 
+    public function getListTipoCliente(Request $request){
+        $oTipoCliente = new ClientRepository();
+        $n = $oTipoCliente->getListTipoCliente();                 
+        return response()->json($n);
+    }
 
 }

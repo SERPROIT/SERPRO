@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 17, 2020 at 12:57 AM
+-- Generation Time: Mar 20, 2020 at 03:44 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.1
 
@@ -26,6 +26,49 @@ DELIMITER $$
 --
 -- Procedures
 --
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cargo` (IN `p_DisplayLength` INT, IN `p_DisplayStart` INT, IN `p_SortCol` INT, IN `p_SortDir` VARCHAR(10), IN `p_Search` VARCHAR(255))  BEGIN
+
+ DECLARE FirstRec int DEFAULT 0;
+ DECLARE LastRec int DEFAULT 0;
+ SET FirstRec = p_DisplayStart;
+ SET LastRec = p_DisplayStart + p_DisplayLength;
+ 
+ 
+  With CTE_cargo as
+ (
+  Select ROW_NUMBER() over (order by 
+  
+	  case when (p_SortCol = 0 and p_SortDir='asc')
+	   then id
+	  end asc,
+	  case when (p_SortCol = 0 and p_SortDir='desc')
+	   then id
+	  end desc,
+		case when (p_SortCol = 1 and p_SortDir='asc')
+			then nombre
+		end asc,
+		case when (p_SortCol = 1 and p_SortDir='desc')
+			then nombre
+		end desc
+  )
+  as RowNum,
+  COUNT(*) over() as TotalCount,
+  c.id,
+  c.nombre,
+  c.estado
+  from cargo c
+  where (p_Search IS NULL 
+    Or nombre like concat('%' , p_Search , '%'))
+	AND c.estado = 1
+ )
+ 
+ Select * 
+ from CTE_cargo
+ where RowNum BETWEEN FirstRec AND LastRec;
+ 
+
+END$$
+
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cliente` (IN `p_DisplayLength` INT, IN `p_DisplayStart` INT, IN `p_SortCol` INT, IN `p_SortDir` VARCHAR(10), IN `p_Search` VARCHAR(255))  BEGIN
 
  DECLARE FirstRec int DEFAULT 0;
@@ -169,6 +212,45 @@ SET cCodMarGen = (SELECT idmarcacion_general FROM marcaciones_generales WHERE us
     VALUES ( 1, cFecAct, hSalMar, 'SALIDA EXCEPCIONAL', cMenEstTem, cIdUsu, NOW());
      END IF;
    END IF;
+END$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_permiso` (IN `p_idusuario` INT, IN `p_idsubmenu` INT, IN `p_estado` INT)  BEGIN
+
+ DECLARE contador_permiso int DEFAULT 0;
+ DECLARE estado INT DEFAULT true;
+ 
+ IF p_estado = 1 THEN
+	SET p_estado = true;
+ ELSE
+	SET p_estado = false;
+ END IF;
+
+ 
+ SET contador_permiso = (SELECT COUNT(*) FROM permiso where idusuario = p_idusuario and idsubmenu = p_idsubmenu);
+ 
+ IF p_estado = true THEN
+	
+	 IF contador_permiso = 0 THEN
+	
+		INSERT INTO permiso (idusuario, idsubmenu, estado) values (p_idusuario, p_idsubmenu, estado);
+	
+	 ELSE
+		
+		 UPDATE permiso set estado = p_estado where idusuario = p_idusuario and idsubmenu = p_idsubmenu;
+		
+	 END IF;
+	 
+ ELSE
+ 
+	 IF contador_permiso > 0 THEN
+		
+		 UPDATE permiso set estado = p_estado where idusuario = p_idusuario and idsubmenu = p_idsubmenu;
+		
+	 END IF;
+	
+ END IF;
+ 
+	
 END$$
 
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_proveedor` (IN `p_DisplayLength` INT, IN `p_DisplayStart` INT, IN `p_SortCol` INT, IN `p_SortDir` VARCHAR(10), IN `p_Search` VARCHAR(255))  BEGIN
@@ -328,7 +410,8 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_worker` (IN `p_DisplayLength` IN
   COUNT(*) over() as TotalCount,
   c.id,
   c.usuario,
-  c.nombre
+  c.nombre,
+  (select nombre from cargo where id = c.idcargo) as cargo
   from usuario c
   where (p_Search IS NULL 
     Or usuario like concat('%' , p_Search , '%'))
@@ -347,6 +430,38 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `cargo`
+--
+
+CREATE TABLE `cargo` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `estado` bit(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Dumping data for table `cargo`
+--
+
+INSERT INTO `cargo` (`id`, `nombre`, `estado`) VALUES
+(1, 'GERENTE', b'1'),
+(2, 'JEFATURA', b'1'),
+(3, 'ALGO', b'0'),
+(4, 'xxxx', b'0'),
+(5, 'XXX', b'0'),
+(6, 'xxx123', b'0'),
+(7, NULL, b'0'),
+(8, NULL, b'0'),
+(9, 'sasasa', b'0'),
+(10, 'qqqq', b'0'),
+(11, 'TECNICO', b'1'),
+(12, 'tecnico2', b'0'),
+(13, 'TECNICO', b'0'),
+(14, 'TECNICO11', b'0');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `cliente`
 --
 
@@ -358,36 +473,12 @@ CREATE TABLE `cliente` (
   `iddistrito` int(11) DEFAULT NULL,
   `direccion` varchar(500) COLLATE utf8_spanish_ci DEFAULT NULL,
   `telefono` varchar(25) COLLATE utf8_spanish_ci DEFAULT NULL,
-  `estado` bit(1) DEFAULT NULL
+  `estado` bit(1) DEFAULT NULL,
+  `fechaingreso` datetime DEFAULT NULL,
+  `idpublicidad` int(11) DEFAULT NULL,
+  `programacionvisita` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `idtipocliente` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
-
---
--- Dumping data for table `cliente`
---
-
-INSERT INTO `cliente` (`id`, `nombre`, `iddepartamento`, `idprovincia`, `iddistrito`, `direccion`, `telefono`, `estado`) VALUES
-(3, 'sdfdsf', 1, 101, 10101, 'sdfsfsdf', '5155151', b'0'),
-(4, 'sdfsf', 2, 201, 20103, 'fsdfs', '6232', b'0'),
-(5, 'werwer pasjerp', 2, 201, 20101, 'aaaaaa', '4646546', b'1'),
-(6, 'pierina grimaldo', 14, 1401, 140101, 'qqqq dddd ccvvv lasdlsadGJGJGJGJGJKGJGGMHFFFGIFNDGNDGNDNGD', '987654321', b'1'),
-(7, 'pierina', 1, 101, 10101, 'zzzzzz', '987654321', b'1'),
-(8, 'www', 1, 101, 10101, 'www', '1222', b'1'),
-(9, 'qweqweqwe', 1, 101, 10101, 'qweqweqweqweqwewq', '99516161', b'1'),
-(10, 'adasdasd', 1, 101, 10101, 'cvcvcvcvv', '6565654564', b'1'),
-(11, 'asdasdasd', NULL, NULL, NULL, 'asdasdasdasda', '65651651', b'0'),
-(12, 'dsaddsadad', NULL, NULL, NULL, 's', '646515', b'0'),
-(13, 'asdasdas', NULL, NULL, NULL, 'asdasdas', '651651651', b'0'),
-(14, 'adfsdf', 1, 101, 10101, 'fdf', '5151', b'0'),
-(15, 'dasdasd', NULL, NULL, NULL, 'asdasdads', '5151', b'0'),
-(16, 'qqqq', 1, 101, 10101, 'qqqq', '99999', b'1'),
-(17, 'chiclayo', 1, 101, 10101, 'yyyyyyyyyyyyyyyyy', '654654654', b'0'),
-(18, 'rrrrrrrrrrrr', 1, 101, 10101, 'bbbbbbbbbbbb', '21321321', b'0'),
-(19, 'pier mi perrita', 15, 1501, 150115, 'mi bbita golosa', '987654321', b'0'),
-(20, 'grimaldo', 15, 1501, 150110, 'xxx', '654654654599999', b'1'),
-(21, NULL, 1, 101, 10101, NULL, NULL, b'0'),
-(23, NULL, NULL, NULL, NULL, NULL, NULL, b'0'),
-(24, NULL, NULL, NULL, NULL, NULL, NULL, b'0'),
-(25, 'cliente serproc', 15, 1501, 150101, 'huandoy 456', '987654321', b'1');
 
 -- --------------------------------------------------------
 
@@ -2384,7 +2475,11 @@ INSERT INTO `permiso` (`id`, `idusuario`, `idsubmenu`, `estado`) VALUES
 (1, 1, 1, b'1'),
 (2, 1, 2, b'1'),
 (3, 1, 3, b'1'),
-(4, 1, 4, b'1');
+(4, 1, 4, b'1'),
+(6, 4, 4, b'1'),
+(10, 4, 2, b'1'),
+(11, 4, 1, b'1'),
+(12, 4, 3, b'0');
 
 -- --------------------------------------------------------
 
@@ -2628,6 +2723,26 @@ INSERT INTO `provincia` (`id`, `nombre`, `iddepartamento`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `publicidad`
+--
+
+CREATE TABLE `publicidad` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `estado` bit(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Dumping data for table `publicidad`
+--
+
+INSERT INTO `publicidad` (`id`, `nombre`, `estado`) VALUES
+(1, 'FACEBOOK', b'1'),
+(2, 'MARKPLACE', b'1');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `submenu`
 --
 
@@ -2648,6 +2763,26 @@ INSERT INTO `submenu` (`id`, `nombre`, `ruta`, `idmenu`, `estado`) VALUES
 (2, 'PROVEEDOR', 'ProveedorController@index', 1, b'1'),
 (3, 'ADMINISTRADOR', 'WorkerController@index', 3, b'1'),
 (4, 'INICIO', 'InicioController@index', 1, b'1');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `tipocliente`
+--
+
+CREATE TABLE `tipocliente` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
+  `estado` bit(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Dumping data for table `tipocliente`
+--
+
+INSERT INTO `tipocliente` (`id`, `nombre`, `estado`) VALUES
+(1, 'POTENCIAL', b'1'),
+(2, 'ESCPECIAL', b'1');
 
 -- --------------------------------------------------------
 
@@ -2685,21 +2820,30 @@ CREATE TABLE `usuario` (
   `telefono` varchar(25) COLLATE utf8_spanish_ci DEFAULT NULL,
   `direccion` varchar(500) COLLATE utf8_spanish_ci DEFAULT NULL,
   `estado` bit(1) DEFAULT NULL,
-  `vigencia` bit(1) DEFAULT NULL
+  `vigencia` bit(1) DEFAULT NULL,
+  `idcargo` int(11) DEFAULT NULL,
+  `passwordmaestro` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
 
 --
 -- Dumping data for table `usuario`
 --
 
-INSERT INTO `usuario` (`id`, `usuario`, `password`, `nombre`, `dni`, `correo`, `telefono`, `direccion`, `estado`, `vigencia`) VALUES
-(1, 'admin', '123', 'nombres y apellidos', '46153010', 'ing.cizuniga@gmail.com', '987654321', 'los olivos 123', b'1', b'1'),
-(2, 'qwe1', 'qwe', 'xxxx', NULL, NULL, NULL, NULL, b'1', b'1'),
-(3, 'sss', '123', 'eeee', NULL, NULL, NULL, 'ddasd 656 adads', b'1', b'1');
+INSERT INTO `usuario` (`id`, `usuario`, `password`, `nombre`, `dni`, `correo`, `telefono`, `direccion`, `estado`, `vigencia`, `idcargo`, `passwordmaestro`) VALUES
+(1, 'admin', '123', 'ADMIN', '46153010', 'ing.cizuniga@gmail.com', '987654321', 'los olivos 123', b'1', b'1', 1, 'oscar'),
+(2, 'secretaria', '123', 'XXXX', '46151515', NULL, '987654321', 'aaaaa', b'0', b'1', 2, NULL),
+(3, 'sss', '123', 'EEEEQQ', '465454', 'dffg', '987654', 'ddasd 656 adads', b'0', b'1', 5, NULL),
+(4, 'secretaria', '123', 'SECRETARIA', '456131', NULL, '6546545', 'asdasdasd', b'1', b'1', 2, 'asdasdasdasd');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `cargo`
+--
+ALTER TABLE `cargo`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `cliente`
@@ -2748,9 +2892,21 @@ ALTER TABLE `provincia`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `publicidad`
+--
+ALTER TABLE `publicidad`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `submenu`
 --
 ALTER TABLE `submenu`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `tipocliente`
+--
+ALTER TABLE `tipocliente`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -2762,6 +2918,12 @@ ALTER TABLE `usuario`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `cargo`
+--
+ALTER TABLE `cargo`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `cliente`
@@ -2779,7 +2941,7 @@ ALTER TABLE `menu`
 -- AUTO_INCREMENT for table `permiso`
 --
 ALTER TABLE `permiso`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `proveedor`
@@ -2788,16 +2950,28 @@ ALTER TABLE `proveedor`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT for table `publicidad`
+--
+ALTER TABLE `publicidad`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `submenu`
 --
 ALTER TABLE `submenu`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
+-- AUTO_INCREMENT for table `tipocliente`
+--
+ALTER TABLE `tipocliente`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -37,9 +37,13 @@ class WorkerController extends Controller
         $order_dir = $request->get('order')[0]['dir'];
         $order_col = $request->get('order')[0]['column'];
 
-         $members = $oWorker->getListWorker($length,$start,$order_col,$order_dir,$search);
+        $members = $oWorker->getListWorker($length,$start,$order_col,$order_dir,$search);
 
-        $total_members = $members[0]->TotalCount; 
+        if($members == null){
+            $total_members = 0; 
+        }else{
+            $total_members = $members[0]->TotalCount; 
+        }
 
         $data = array(
             'draw' => $draw,
@@ -66,7 +70,11 @@ class WorkerController extends Controller
 
         $members = $oWorker->getListCargo($length,$start,$order_col,$order_dir,$search);
 
-        $total_members = $members[0]->TotalCount; 
+        if($members == null){
+            $total_members = 0; 
+        }else{
+            $total_members = $members[0]->TotalCount; 
+        }
 
         $data = array(
             'draw' => $draw,

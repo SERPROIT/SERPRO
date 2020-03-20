@@ -12,7 +12,6 @@
     <script src="{{asset('js/global_assets/demo_pages/form_select2.js')}}"></script>
 
     
-   
     <script src="{{asset('js/global_assets/plugins/forms/styling/uniform.min.js')}}"></script>
     <script src="{{asset('js/global_assets/plugins/forms/styling/switchery.min.js')}}"></script>
     <script src="{{asset('js/global_assets/plugins/forms/styling/switch.min.js')}}"></script>
