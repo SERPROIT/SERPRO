@@ -56,7 +56,7 @@
                     <div class="form-group row">
                         <label class="col-form-label col-lg-2">PROGRAMACION VISITA</label>
                         <div class="col-lg-10">
-                            <input type="text" name="nombres" class="form-control" placeholder="Ingresar Programacion Visita">
+                            <input type="text" name="programacionvisita" class="form-control" placeholder="Ingresar Programacion Visita">
                         </div>
                     </div>
                     <div class="form-group row">
@@ -118,18 +118,130 @@
         </div>
     </div>
 
+    <!-- Basic modal -->
+        <div id="modal_default" class="modal fade" tabindex="-1">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">DETALLE ORDENES</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="card-body">
+                            <div class="form-group row">
+                                <label class="col-form-label col-lg-2">CLIENTE</label>
+                                <div class="col-lg-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-form-label col-lg-2">TOTAL ORDENES</label>
+                                <div class="col-lg-10">
+                                    <input type="text" class="form-control" value="6" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-form-label col-lg-2">BUSCADOR POR FECHA</label>
+                                <div class="col-lg-10">
+                                    <input type="text" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <table  class="table" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>FECHA</th>
+                                    <th>N° ORDEN</th>
+                                    <th>DETALLE DE ORDEN</th> 
+                                </tr>
+                            </thead>
+                            <tbody>
+                               <tr>
+                                    <td>20/03/2020</td>
+                                    <td>123</td>
+                                    <td>LIMPIEZA COCINA</td> 
+                                </tr>
+                                <tr>
+                                    <td>20/03/2020</td>
+                                    <td>123</td>
+                                    <td>LIMPIEZA COCINA</td> 
+                                </tr>
+                                <tr>
+                                    <td>20/03/2020</td>
+                                    <td>123</td>
+                                    <td>LIMPIEZA COCINA</td> 
+                                </tr>
+                                <tr>
+                                    <td>20/03/2020</td>
+                                    <td>123</td>
+                                    <td>LIMPIEZA COCINA</td> 
+                                </tr>
+                                <tr>
+                                    <td>20/03/2020</td>
+                                    <td>123</td>
+                                    <td>LIMPIEZA COCINA</td> 
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-link" data-dismiss="modal">Cerrar</button>
+                        <!-- <button type="button" class="btn bg-primary">Save changes</button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+ <!-- /basic modal -->
+
 
 <!-- Multiple fixed columns -->
     <div class="card"> 
+        <div class="card-body">
+            <div class="form-group row">
+                <label class="col-form-label col-lg-2">FILTRO AÑO</label>
+                <div class="col-lg-3">
+                    <input type="text" id="filtroyear" class="form-control" placeholder="yyyy">
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-form-label col-lg-2">FILTRO MES</label>
+                <div class="col-lg-3">
+                    <select id="cmbMes"  data-placeholder="Mes" class="form-control select-search" data-fouc>
+                         <option value="0">SELECCIONE</option>
+                         <option value="enero">ENERO</option>
+                         <option value="febrero">FEBRERO</option>
+                         <option value="marzo">MARZO</option>
+                         <option value="abril">ABRIL</option>
+                         <option value="mayo">MAYO</option>
+                         <option value="junio">JUNIO</option>
+                         <option value="julio">JULIO</option>
+                         <option value="agosto">AGOSTO</option>
+                         <option value="septiembre">SEPTIEMBRE</option>
+                         <option value="octubre">OCTUBRE</option>
+                         <option value="noviembre">NOVIEMBRE</option>
+                         <option value="diciembre">DICIEMBRE</option>
+                     </select>
+                </div>
+            </div>
+        </div>
         <table id="tblCliente" class="table" width="100%">
             <thead>
                 <tr>
                     <th>Nombres</th>
+                    <th>N° Orden</th>
+                    <th>Fecha Ingreso</th>
+                    <th>Publicidad</th>
+                    <th>Programacion Visita</th>
+                    <th>TipoCliente</th>
                     <th>Departamento</th>
                     <th>Provincia</th>
                     <th>Distrito</th>
                     <th>Telefono</th>
                     <th>Direccion</th>
+                    <th>Año</th>
+                    <th>Mes</th>
                     <th></th> 
                 </tr>
             </thead>
@@ -143,6 +255,13 @@
 <script>
 
     $(document).ready(function(){
+
+        // Defaults
+        var swalInit = swal.mixin({
+                buttonsStyling: false,
+                confirmButtonClass: 'btn btn-primary',
+                cancelButtonClass: 'btn btn-light'
+            });
 
         $.ajaxSetup({
             headers: {
@@ -171,11 +290,25 @@
             },
             columns: [
                 { "data": "nombre" },
+                {
+                   "data": 'id',
+                   "render": function (id) {
+                        var link = '<button type="button" class="btn btn-outline-primary border-transparent" data-toggle="modal" data-target="#modal_default">6</button>';
+                        
+                       return link;
+                   }
+                },
+                { "data": "fechaingreso" },              
+                { "data": "publicidad" },
+                { "data": "programacionvisita" },
+                { "data": "tipocliente" },
                 { "data": "departamento" },
                 { "data": "provincia" },
                 { "data": "distrito" },                
                 { "data": "telefono" }, 
                 { "data": "direccion" },
+                { "data": "yyyy" },
+                { "data": "mm" },
                 {
                    "data": 'id',
                    "render": function (id) {
@@ -212,22 +345,86 @@
                     "next": "Siguiente",
                     "previous": "Anterior"
                 }
-            },
+            }
+            // ,rowCallback: function( row, data, index ) {
+
+            //     // var disabled = (data[12].length >= 1) ? '' : 'disabled';
+            //     // var buttonCash = '<button class="ui '+disabled+' button paymentType green'+((data=="cash")?'':' basic')+'" data-paymentType="cash"><i class="ui euro icon"></i></button>';
+            //     // var buttonCC = '<button class="ui '+disabled+' button paymentType blue'+((data=="cc")?'':' basic')+'" data-paymentType="cc"><i class="ui payment icon"></i></button>';
+            //     // $('td:eq(12)', row).html( '<div class="ui mini icon buttons tg-'+disabled+'">'+buttonCash+'<div class="or"></div>'+buttonCC+'</div>' );
+            // }
         });
+
+        $('#filtroyear').keyup( function() {
+            // console.log(this.value)
+            _tblCliente.search(this.value).draw();
+        } );
+
+         $("#cmbMes").change(function () {
+            var mes = this.value
+            if(mes == 0){ mes = "" }
+            _tblCliente.search(mes).draw();
+        });
+
+        // _tblCliente.columns().every(function () {
+        //     var dataTableColumn = this;
+        //     $("#filtroyear").on('keyup', function () {
+        //          console.log('dataTableColumn',dataTableColumn)
+        //         dataTableColumn.search(this.value).draw();
+        //     });
+        // });
+
 
         $("button[name=guardar]").click(function(){
             var accion = $("#accion").val()
             var id = $("#id").val()
             var nombres = $("input[name=nombres]").val()
+            var fechaingreso = $("input[name=fechaingreso]").val()
+            var idpublicidad = $("#cmbPublicidad").val()
+            var programacionvisita = $("input[name=programacionvisita]").val()
+            var idtipocliente = $("#cmbTipoCliente").val()
             var departamento = $("#cmbDepartamento").val()
             var provincia = $("#cmbProvincia").val()
             var distrito = $("#cmbDistrito").val()
             var telefono = $("input[name=telefono]").val()
             var direccion = $("textarea[name=direccion]").val()
 
-            var cliente = {name:nombres, iddepartment:departamento, idprovince:provincia, iddistrict:distrito, addres:direccion, phone:telefono, id: id}
+            nombres = nombres.toUpperCase()
+            //fechaingreso = fechaingreso+' 12:00:00'
+
+            var cliente = {name:nombres, iddepartment:departamento, idprovince:provincia, iddistrict:distrito, addres:direccion, phone:telefono, fechaingreso:fechaingreso, idpublicidad:idpublicidad, programacionvisita:programacionvisita, idtipocliente:idtipocliente, id: id}
 
 
+            if(nombres.trim().length == 0){
+                MensajeError('Recuerda', 'Ingresar Nombres!')
+                return false
+            } 
+            if(fechaingreso.trim().length == 0){
+                MensajeError('Recuerda', 'Seleccionar Fecha!')
+                return false
+            }
+            if(idpublicidad == 0){
+                MensajeError('Recuerda', 'Seleccionar Publicidad!')
+                return false
+            } 
+            if(programacionvisita.trim().length == 0){
+                MensajeError('Recuerda', 'Ingresar Programacion Visita!')
+                return false
+            }
+            if(idtipocliente == 0){
+                MensajeError('Recuerda', 'Seleccionar Tipo Cliente!')
+                return false
+            }
+            if(telefono.trim().length == 0){
+                MensajeError('Recuerda', 'Ingresar Telefono!')
+                return false
+            }
+            if(direccion.trim().length == 0){
+                MensajeError('Recuerda', 'Ingresar Direccion!')
+                return false
+            }
+            
+           
             if(accion == "registrar"){
                 RegistrarCliente(cliente)
             }else if(accion == "modificar"){
@@ -240,8 +437,9 @@
         });
 
         $('#tblCliente tbody').on( 'click','button.btn-danger', function () {
-             var id = $(this)[0].name                      
-             EliminarCliente(id)   
+             var id = $(this)[0].name 
+             MensajeEliminarCliente('Estas Seguro', 'Este registro se eliminara',id)                     
+             //EliminarCliente(id)   
         });
 
         $('#tblCliente tbody').on( 'click','button.btn-primary', function () {
@@ -293,9 +491,14 @@
 
                 var lista = [];
 
+                $('#cmbPublicidad').empty();
+                var seleccione = {id:0, text:'----SELECCIONE----'}
+
+                lista[0] = seleccione
+
                 $.each(data, function (i, data) {
                     var option = {id:data.id,text:data.nombre}
-                    lista[i] = option
+                    lista[i+1] = option
                 });
                 
                 $('#cmbPublicidad').select2({ data: lista });
@@ -314,10 +517,13 @@
             success:function(data){
 
                 var lista = [];
+                $('#cmbTipoCliente').empty();
+                var seleccione = {id:0, text:'----SELECCIONE----'}
 
+                lista[0] = seleccione
                 $.each(data, function (i, data) {
                     var option = {id:data.id,text:data.nombre}
-                    lista[i] = option
+                    lista[i+1] = option
                 });
                 
                 $('#cmbTipoCliente').select2({ data: lista });
@@ -341,6 +547,54 @@
           getDistrict($(this).val(),$('#cmbDepartamento').val())
 
         });
+
+        function MensajeError(titulo, mensaje){
+            swalInit.fire({
+                    title: titulo,
+                    text: mensaje,
+                    type: 'error'
+            });
+        }
+
+        function MensajeCorrecto(titulo, mensaje){
+            swalInit.fire({
+                title: titulo,
+                text: mensaje,
+                type: 'success'
+            });
+        }
+
+        function MensajeInformacion(titulo, mensaje){
+            swalInit.fire({
+                title: titulo,
+                text: mensaje,
+                type: 'info'
+            });
+        }
+
+        function MensajeEliminarCliente(titulo, mensaje, id){
+            
+            swalInit.fire({
+                title: titulo,
+                text: mensaje,
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Si, Eliminar!',
+                cancelButtonText: 'No, Cancelar!',
+                confirmButtonClass: 'btn btn-danger',
+                cancelButtonClass: 'btn btn-info',
+                buttonsStyling: false
+            }).then(function(result) {
+                if (result.value){
+                    //console.log('true',id)
+                    EliminarCliente(id)
+                }else{
+                    //console.log('undefined',id)
+                }
+                
+            });
+            
+       }
 
 
         function getProvince(id){
@@ -406,9 +660,10 @@
                 type: 'POST',
                 data: cliente,
                 datatype: 'JSON',
-                success:function(data){                   
-                        if(data){alert('Cliente Registrado')}                       
-                        _tblCliente.ajax.reload();
+                success:function(data){ 
+                        _tblCliente.ajax.reload();                  
+                        if(data){ MensajeCorrecto('Bien!', 'Cliente Guardado!')}                       
+                        
                     },
                     error:function(data){
                         console.log(data);
@@ -423,9 +678,10 @@
                 type: 'POST',
                 data: cliente,
                 datatype: 'JSON',
-                success:function(data){                   
-                        if(data){alert('Cliente Modificado')}                       
-                        _tblCliente.ajax.reload();
+                success:function(data){  
+                        _tblCliente.ajax.reload();                 
+                        if(data){MensajeCorrecto('Bien!', 'Cliente actualizado correctamente!')}                       
+                        
                     },
                     error:function(data){
                         console.log(data);
@@ -441,9 +697,9 @@
                 data: {id:id},
                 datatype: 'JSON',
                 success:function(data){  
-                        console.log(data)               
-                         if(data){alert('Cliente Eliminado')}                       
-                         _tblCliente.ajax.reload();
+                        _tblCliente.ajax.reload();              
+                        if(data){MensajeCorrecto('Bien!', 'Cliente eliminado correctamente!')}                       
+                         
                     },
                     error:function(data){
                         console.log(data);
@@ -451,23 +707,23 @@
                 });
         }
 
-        function ActualizarCliente(id){
+        // function ActualizarCliente(id){
 
-            $.ajax({              
-                url: "{{  route('client.delete') }}",
-                type: 'POST',
-                data: {id:id},
-                datatype: 'JSON',
-                success:function(data){  
-                        console.log(data)               
-                         if(data){alert('Cliente Eliminado')}                       
-                         _tblCliente.ajax.reload();
-                    },
-                    error:function(data){
-                        console.log(data);
-                    }
-                });
-        }
+        //     $.ajax({              
+        //         url: "{{  route('client.delete') }}",
+        //         type: 'POST',
+        //         data: {id:id},
+        //         datatype: 'JSON',
+        //         success:function(data){  
+        //                 _tblCliente.ajax.reload();               
+        //                  if(data){MensajeCorrecto('Bien!', 'Cliente actualizado correctamente!')}                       
+                         
+        //             },
+        //             error:function(data){
+        //                 console.log(data);
+        //             }
+        //         });
+        // }
 
         function LimpiarFormulario(){
             $("#accion").val('')
@@ -477,6 +733,10 @@
              getDistrict(1,101)
              $("input[name=telefono]").val('')
              $("textarea[name=direccion]").val('')
+             $("input[name=fechaingreso]").val('')
+             $("#cmbPublicidad").val(0).trigger('change')
+             $("input[name=programacionvisita]").val('')
+             $("#cmbTipoCliente").val(0).trigger('change')
         }
 
         function ObtenerCliente(id){
@@ -486,7 +746,7 @@
                 data: { 'id':id},
                 datatype: 'JSON',
                 success:function(data){                       
-                        console.log(data);                        
+                        // console.log(data);                        
                      $("#accion").val('modificar')
                      $("#id").val(data[0].id)
                      $("input[name=nombres]").val(data[0].nombre)
@@ -495,12 +755,21 @@
                      $("#cmbDistrito").val(data[0].iddistrito).trigger('change')
                      $("input[name=telefono]").val(data[0].telefono)
                      $("textarea[name=direccion]").val(data[0].direccion)
+                     $("input[name=fechaingreso]").val( formatoFecha(data[0].fechaingreso))
+                     $("#cmbPublicidad").val(data[0].idpublicidad).trigger('change')
+                     $("input[name=programacionvisita]").val(data[0].programacionvisita)
+                     $("#cmbTipoCliente").val(data[0].idtipocliente).trigger('change')
 
                     },
                     error:function(data){
                         console.log(data);
                     }
              });
+        }
+        function formatoFecha(fecha){
+            var a = fecha.split('/');
+            // console.log('a',a)
+            return a[2]+"-"+a[1]+"-"+a[0]
         }
 
 });

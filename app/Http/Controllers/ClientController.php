@@ -63,13 +63,14 @@ class ClientController extends Controller
 
     public function saveClient(Request $request){
         $oUbigeo = new ClientRepository();
-          $n = $oUbigeo->saveClient($request->name, $request->iddepartment, $request->idprovince, $request->iddistrict, $request->addres, $request->phone, 1, $request->id);                 
+        //fechaingreso, idpublicidad, programacionvisita, idtipocliente,
+          $n = $oUbigeo->saveClient($request->name, $request->iddepartment, $request->idprovince, $request->iddistrict, $request->addres, $request->phone, $request->fechaingreso, $request->idpublicidad, $request->programacionvisita, $request->idtipocliente, 1, $request->id);                 
         return response()->json($n);
     }
 
     public function updateClient(Request $request){
         $oUbigeo = new ClientRepository();
-          $n = $oUbigeo->updateClient($request->name, $request->iddepartment, $request->idprovince, $request->iddistrict, $request->addres, $request->phone, 1, $request->id);                 
+          $n = $oUbigeo->updateClient($request->name, $request->iddepartment, $request->idprovince, $request->iddistrict, $request->addres, $request->phone, $request->fechaingreso, $request->idpublicidad, $request->programacionvisita, $request->idtipocliente, 1, $request->id);                 
         return response()->json($n);
     }
 

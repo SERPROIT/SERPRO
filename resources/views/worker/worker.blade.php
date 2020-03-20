@@ -240,7 +240,7 @@
                 confirmButtonClass: 'btn btn-primary',
                 cancelButtonClass: 'btn btn-light'
             });
-        var resultMessage
+        //var resultMessage
 
         $.ajaxSetup({
             headers: {

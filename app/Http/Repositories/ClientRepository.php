@@ -37,14 +37,14 @@ class ClientRepository
 
     }
 
-    public function saveClient($name, $iddepartment, $idprovince, $iddistrict, $addres, $phone, $status, $id){
-         $client = DB::insert('insert into cliente (nombre,iddepartamento,idprovincia,iddistrito,direccion,telefono,estado) values (?,?,?,?,?,?,?)', [ $name, $iddepartment, $idprovince, $iddistrict, $addres, $phone, $status]);
+    public function saveClient($name, $iddepartment, $idprovince, $iddistrict, $addres, $phone, $fechaingreso, $idpublicidad, $programacionvisita, $idtipocliente, $status, $id){
+         $client = DB::insert('insert into cliente (nombre,iddepartamento,idprovincia,iddistrito,direccion,telefono,fechaingreso, idpublicidad, programacionvisita, idtipocliente, estado) values (?,?,?,?,?,?,?,?,?,?,?)', [ $name, $iddepartment, $idprovince, $iddistrict, $addres, $phone, $fechaingreso, $idpublicidad, $programacionvisita, $idtipocliente, $status]);
         
         return $client;
     }
 
-    public function updateClient($name, $iddepartment, $idprovince, $iddistrict, $addres, $phone, $status, $id){
-         $client = DB::update('update cliente set nombre = ?, iddepartamento = ?, idprovincia = ?, iddistrito = ?, direccion = ?, telefono = ?, estado = ?  where id = ?', [ $name, $iddepartment, $idprovince, $iddistrict, $addres, $phone, $status, $id]);
+    public function updateClient($name, $iddepartment, $idprovince, $iddistrict, $addres, $phone, $fechaingreso, $idpublicidad, $programacionvisita, $idtipocliente, $status, $id){
+         $client = DB::update('update cliente set nombre = ?, iddepartamento = ?, idprovincia = ?, iddistrito = ?, direccion = ?, telefono = ?, fechaingreso = ?, idpublicidad =?, programacionvisita = ?, idtipocliente = ?, estado = ?   where id = ?', [ $name, $iddepartment, $idprovince, $iddistrict, $addres, $phone, $fechaingreso, $idpublicidad, $programacionvisita, $idtipocliente, $status, $id]);
         
         return $client;
     }
@@ -58,7 +58,7 @@ class ClientRepository
 
     public function onlyClient($id){
         
-         $client = DB::select('select id,nombre,iddepartamento,idprovincia,iddistrito,direccion,telefono from cliente where id = ?', [$id]);
+         $client = DB::select('select id,nombre,iddepartamento,idprovincia,iddistrito,direccion,telefono,DATE_FORMAT(fechaingreso, "%d/%m/%Y") as fechaingreso, idpublicidad, programacionvisita, idtipocliente from cliente where id = ?', [$id]);
         
         return $client;
     }
