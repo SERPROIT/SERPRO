@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Mar 20, 2020 at 03:44 AM
+-- Generation Time: Mar 21, 2020 at 04:20 AM
 -- Server version: 10.4.11-MariaDB
 -- PHP Version: 7.4.1
 
@@ -76,6 +76,7 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cliente` (IN `p_DisplayLength` I
  SET FirstRec = p_DisplayStart;
  SET LastRec = p_DisplayStart + p_DisplayLength;
  
+ SET lc_time_names = 'es_PE';
  
   With CTE_cliente as
  (
@@ -92,6 +93,12 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cliente` (IN `p_DisplayLength` I
 		end asc,
 		case when (p_SortCol = 1 and p_SortDir='desc')
 			then nombre
+		end desc,
+        case when (p_SortCol = 1 and p_SortDir='asc')
+			then fechaingreso
+		end asc,
+		case when (p_SortCol = 1 and p_SortDir='desc')
+			then fechaingreso
 		end desc
   )
   as RowNum,
@@ -105,11 +112,22 @@ CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_cliente` (IN `p_DisplayLength` I
   iddistrito,
   (select nombre from distrito where id = c.iddistrito) as distrito,
   c.direccion,
-  c.telefono
+  c.telefono,
+  DATE_FORMAT(c.fechaingreso, '%d/%m/%Y') as fechaingreso,
+  c.idpublicidad,
+  (select nombre from publicidad where id = c.idpublicidad) as publicidad,
+  c.programacionvisita,
+  c.idtipocliente,
+  (select nombre from tipocliente where id = c.idtipocliente) as tipocliente,
+ DATE_FORMAT(c.fechaingreso, '%Y') as yyyy,
+ DATE_FORMAT(c.fechaingreso, '%M') as mm
   from cliente c
   where (p_Search IS NULL 
-    Or nombre like concat('%' , p_Search , '%'))
-	AND estado = 1
+    Or nombre like concat('%' , p_Search , '%')
+    Or DATE_FORMAT(c.fechaingreso, '%d/%m/%Y') like concat('%' , p_Search , '%')
+   Or DATE_FORMAT(c.fechaingreso, '%Y') like concat('%' , p_Search , '%')
+   Or DATE_FORMAT(c.fechaingreso, '%M') like concat('%' , p_Search , '%')
+   ) AND estado = 1
  )
  
  Select * 
@@ -479,6 +497,15 @@ CREATE TABLE `cliente` (
   `programacionvisita` varchar(100) COLLATE utf8_spanish_ci DEFAULT NULL,
   `idtipocliente` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish_ci;
+
+--
+-- Dumping data for table `cliente`
+--
+
+INSERT INTO `cliente` (`id`, `nombre`, `iddepartamento`, `idprovincia`, `iddistrito`, `direccion`, `telefono`, `estado`, `fechaingreso`, `idpublicidad`, `programacionvisita`, `idtipocliente`) VALUES
+(26, 'CLIENTE A', 1, 101, 10101, 'asad', '987654321', b'1', '2019-03-20 00:00:00', 1, '1 año', 1),
+(27, 'CLIENTE B', 1, 101, 10101, 'xxxx', '987654321', b'1', '2019-04-17 00:00:00', 2, '6 meses', 4),
+(28, 'AAA', 15, 1501, 150101, 'eeeeee', '987654321', b'1', '2020-09-23 00:00:00', 5, '1 año', 2);
 
 -- --------------------------------------------------------
 
@@ -2738,7 +2765,10 @@ CREATE TABLE `publicidad` (
 
 INSERT INTO `publicidad` (`id`, `nombre`, `estado`) VALUES
 (1, 'FACEBOOK', b'1'),
-(2, 'MARKPLACE', b'1');
+(2, 'MARKPLACE', b'1'),
+(3, 'BASE DE DATOS', b'1'),
+(4, 'VOLANTE', b'1'),
+(5, 'RECOMENDADO', b'1');
 
 -- --------------------------------------------------------
 
@@ -2782,7 +2812,9 @@ CREATE TABLE `tipocliente` (
 
 INSERT INTO `tipocliente` (`id`, `nombre`, `estado`) VALUES
 (1, 'POTENCIAL', b'1'),
-(2, 'ESCPECIAL', b'1');
+(2, 'ESPECIAL', b'1'),
+(3, 'NORMAL', b'1'),
+(4, 'TENER CUIDADO', b'1');
 
 -- --------------------------------------------------------
 
@@ -2929,7 +2961,7 @@ ALTER TABLE `cargo`
 -- AUTO_INCREMENT for table `cliente`
 --
 ALTER TABLE `cliente`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
 
 --
 -- AUTO_INCREMENT for table `menu`
@@ -2953,7 +2985,7 @@ ALTER TABLE `proveedor`
 -- AUTO_INCREMENT for table `publicidad`
 --
 ALTER TABLE `publicidad`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `submenu`
@@ -2965,7 +2997,7 @@ ALTER TABLE `submenu`
 -- AUTO_INCREMENT for table `tipocliente`
 --
 ALTER TABLE `tipocliente`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `usuario`
