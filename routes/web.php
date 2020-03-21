@@ -93,13 +93,9 @@ Route::get('ubigeo/district', 'UbigeoController@getDistrict')->name('ubigeo.dist
 // Route::get('proveedor', 'ProveedorController@index');
 
 Route::post('proveedor/save', 'ProveedorController@saveProveedor')->name('proveedor.save');
-
 Route::get('proveedor/lista', 'ProveedorController@getListProveedor')->name('proveedor.list');
-
 Route::post('proveedor/delete', 'ProveedorController@deleteProveedor')->name('proveedor.delete');
-
 Route::get('proveedor/only', 'ProveedorController@onlyProveedor')->name('proveedor.only');
-
 Route::post('proveedor/update', 'ProveedorController@updateProveedor')->name('proveedor.update');
 
 

@@ -11,10 +11,10 @@
     <script src="{{asset('js/global_assets/plugins/forms/selects/select2.min.js')}}"></script>
     <script src="{{asset('js/global_assets/demo_pages/form_select2.js')}}"></script>
     
-    <!-- <script src="{{asset('js/global_assets/plugins/forms/styling/uniform.min.js')}}"></script>
+    <script src="{{asset('js/global_assets/plugins/forms/styling/uniform.min.js')}}"></script>
     <script src="{{asset('js/global_assets/plugins/forms/styling/switchery.min.js')}}"></script>
     <script src="{{asset('js/global_assets/plugins/forms/styling/switch.min.js')}}"></script>
-    <script src="{{asset('js/global_assets/demo_pages/form_checkboxes_radios.js')}}"></script> -->
+    <script src="{{asset('js/global_assets/demo_pages/form_checkboxes_radios.js')}}"></script>
 
     <script src="{{asset('js/global_assets/demo_pages/datatables_extension_fixed_columns.js')}}"></script>
 
@@ -346,35 +346,66 @@
                     "previous": "Anterior"
                 }
             }
-            // ,rowCallback: function( row, data, index ) {
-
-            //     // var disabled = (data[12].length >= 1) ? '' : 'disabled';
-            //     // var buttonCash = '<button class="ui '+disabled+' button paymentType green'+((data=="cash")?'':' basic')+'" data-paymentType="cash"><i class="ui euro icon"></i></button>';
-            //     // var buttonCC = '<button class="ui '+disabled+' button paymentType blue'+((data=="cc")?'':' basic')+'" data-paymentType="cc"><i class="ui payment icon"></i></button>';
-            //     // $('td:eq(12)', row).html( '<div class="ui mini icon buttons tg-'+disabled+'">'+buttonCash+'<div class="or"></div>'+buttonCC+'</div>' );
-            // }
+           
         });
+        
 
         $('#filtroyear').keyup( function() {
             // console.log(this.value)
-            _tblCliente.search(this.value).draw();
+            var year = this.value
+            var mes = $("#cmbMes").val()
+            if(mes == 0){ mes = "" }
+
+            if(year.trim().length > 0){
+
+                if(mes == ""){
+                    console.log('1')
+                    _tblCliente.search(year).draw();
+                }else{
+                    console.log('2')
+                    _tblCliente.search(year).draw();
+                    _tblCliente.search(mes).draw();
+                }
+                
+            }
+            if(year.trim().length == 0){
+                if(mes == ""){
+                    console.log('3')
+                    _tblCliente.search(year).draw();
+                }else{
+                    console.log('4')
+                    _tblCliente.search(year).draw();
+                    _tblCliente.search(mes).draw();
+                }                
+            }
+
+            
         } );
 
-         $("#cmbMes").change(function () {
+        $("#cmbMes").change(function () {
+
+            var year = $('#filtroyear').val()
             var mes = this.value
             if(mes == 0){ mes = "" }
-            _tblCliente.search(mes).draw();
+
+            if(year.trim().length > 0 ){
+                if(mes==""){
+                    _tblCliente.search(mes).draw();
+                    _tblCliente.search(year.trim()).draw();
+                }else{
+                    _tblCliente.search(year.trim()).draw();
+                    _tblCliente.search(mes).draw();
+                }
+                
+            }
+            
+            if(year.trim().length == 0){
+                _tblCliente.search(mes).draw();            
+            }
+            
         });
 
-        // _tblCliente.columns().every(function () {
-        //     var dataTableColumn = this;
-        //     $("#filtroyear").on('keyup', function () {
-        //          console.log('dataTableColumn',dataTableColumn)
-        //         dataTableColumn.search(this.value).draw();
-        //     });
-        // });
-
-
+        
         $("button[name=guardar]").click(function(){
             var accion = $("#accion").val()
             var id = $("#id").val()
