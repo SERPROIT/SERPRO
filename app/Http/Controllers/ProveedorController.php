@@ -8,7 +8,7 @@ use App\Http\Repositories\ProveedorRepository;
 class ProveedorController extends Controller
 {
     /**
-     * Show the profile for the given user.
+     * Show the profile for the given user. PIERR
      *
      * @param  int  $id
      * @return View
