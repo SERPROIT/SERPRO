@@ -1,0 +1,183 @@
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_I_RegistrarNuevoProveedor` (IN `nombre` VARCHAR(500), IN `iddepartamento` INT(11), IN `idprovincia` INT(11), IN `iddistrict` INT(11), IN `idtiposervicio` INT(11), IN `direccion` TEXT, IN `telefono` VARCHAR(25), IN `lstatus` INT(1))  INSERT INTO proveedor 
+(
+    iddepartamento,
+    idprovincia,
+    iddistrito, 
+    idtiposervicio, 
+    nombre, 
+    direccion, 
+    telefono, 
+    estado
+)
+VALUES 
+(
+    iddepartamento,
+    idprovincia,
+    iddistrict, 
+    idtiposervicio, 
+    nombre, 
+    direccion, 
+    telefono, 
+    lstatus
+)$$
+
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_S_ListarDepartamento` ()  SELECT '0' id, '---SELECCIONE---' nombre
+UNION
+SELECT id, nombre FROM departamento$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_S_ListarDetalleMarcacion` (IN `p_DisplayLength` INT, IN `p_DisplayStart` INT, IN `p_SortCol` INT, IN `p_SortDir` VARCHAR(10), IN `p_Search` VARCHAR(255))  NO SQL
+BEGIN
+
+ DECLARE FirstRec int DEFAULT 0;
+ DECLARE LastRec int DEFAULT 0;
+ SET FirstRec = p_DisplayStart;
+ SET LastRec = p_DisplayStart + p_DisplayLength;
+ 
+ 
+  With CTE_DetMarcacion as
+ (
+  Select ROW_NUMBER() over (order by 
+  
+                            case when (p_SortCol = 0 and p_SortDir='asc')
+                            then id
+                            end asc,
+                            case when (p_SortCol = 0 and p_SortDir='desc')
+                            then id
+                            end desc,
+                            case when (p_SortCol = 1 and p_SortDir='asc')
+                            then nombre
+                            end asc,
+                            case when (p_SortCol = 1 and p_SortDir='desc')
+                            then nombre
+                            end desc
+  )
+     as RowNum,
+     COUNT(*) over() as TotalCount,
+   T1.nombre,
+   T1.apellidos,
+   T2.df_ingreso,
+   T2.hr_ingreso,
+   T2.estado_marcacion,
+   T2.estado,
+   (SELECT usuario FROM usuario WHERE usuario = T1.usuario) AS usuario
+     FROM usuario T1 
+      INNER JOIN detallemarcaciones T2 ON T1.id = T2.usuario
+     WHERE (p_Search IS NULL 
+            Or nombre LIKE concat('%' , p_Search , '%')) 
+     ORDER BY T2.fecha_sistema ASC
+ )
+ 
+ Select * 
+ from CTE_DetMarcacion
+ where RowNum BETWEEN FirstRec AND LastRec;
+ 
+
+END$$
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_S_ListarDistritosProveedor` (IN `idprovince` INT(11), IN `iddepartment` INT(11))  SELECT '0' id, '---SELECCIONE---' nombre
+UNION 
+SELECT id, nombre FROM distrito 
+WHERE idprovincia = idprovince AND iddepartamento = iddepartment$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_S_ListarPronvinciaProveedor` (IN `iddepartment` INT(11))  SELECT '0' id, '---SELECCIONE---' nombre
+UNION
+SELECT id, nombre FROM provincia WHERE iddepartamento = iddepartment$$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_S_ListarServicioMantenimiento` (IN `p_DisplayLength` INT, IN `p_DisplayStart` INT, IN `p_SortCol` INT, IN `p_SortDir` VARCHAR(10), IN `p_Search` VARCHAR(255))  BEGIN
+
+ DECLARE FirstRec int DEFAULT 0;
+ DECLARE LastRec int DEFAULT 0;
+ SET FirstRec = p_DisplayStart;
+ SET LastRec = p_DisplayStart + p_DisplayLength;
+ 
+ 
+  With CTE_Servicio as
+ (
+  Select ROW_NUMBER() over (order by 
+  
+	  case when (p_SortCol = 0 and p_SortDir='asc')
+	   then id
+	  end asc,
+	  case when (p_SortCol = 0 and p_SortDir='desc')
+	   then id
+	  end desc,
+		case when (p_SortCol = 1 and p_SortDir='asc')
+			then nombre
+		end asc,
+		case when (p_SortCol = 1 and p_SortDir='desc')
+			then nombre
+		end desc
+  )
+  as RowNum,
+  COUNT(*) over() as TotalCount,
+  T1.id,
+  T1.nombre
+  from tiposervicio T1
+   where (p_Search IS NULL 
+    Or nombre like concat('%' , p_Search , '%'))
+	AND estado = 1
+ )
+ 
+ Select * 
+ from CTE_Servicio
+ where RowNum BETWEEN FirstRec AND LastRec;
+ 
+
+END$$
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_S_ListarTipoServicioProveedor` ()  SELECT '0' id, '---SELECCIONE---' nombre
+UNION
+SELECT id, nombre FROM 	tiposervicio
+WHERE estado = 1$$
+
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_proveedor` (IN `p_DisplayLength` INT, IN `p_DisplayStart` INT, IN `p_SortCol` INT, IN `p_SortDir` VARCHAR(10), IN `p_Search` VARCHAR(255))  BEGIN
+
+ DECLARE FirstRec int DEFAULT 0;
+ DECLARE LastRec int DEFAULT 0;
+ SET FirstRec = p_DisplayStart;
+ SET LastRec = p_DisplayStart + p_DisplayLength;
+ 
+ 
+  With CTE_Proveedor as
+ (
+  Select ROW_NUMBER() over (order by 
+  
+                            case when (p_SortCol = 0 and p_SortDir='asc')
+                            then id
+                            end asc,
+                            case when (p_SortCol = 0 and p_SortDir='desc')
+                            then id
+                            end desc,
+                            case when (p_SortCol = 1 and p_SortDir='asc')
+                            then nombre
+                            end asc,
+                            case when (p_SortCol = 1 and p_SortDir='desc')
+                            then nombre
+                            end desc
+  )
+     as RowNum,
+     COUNT(*) over() as TotalCount,
+  T1.id,
+  T1.nombre,
+  (select nombre from distrito where id = T1.iddistrito) as iddistrito,
+   (select nombre from tiposervicio where id = T1.idtiposervicio) as idtiposervicio,
+  T1.direccion,
+  T1.telefono
+  from proveedor T1
+  where (p_Search IS NULL 
+    Or nombre like concat('%' , p_Search , '%'))
+	AND estado = 1
+ )
+ 
+ Select * 
+ from CTE_Proveedor
+ where RowNum BETWEEN FirstRec AND LastRec;
+ 
+
+END$$
