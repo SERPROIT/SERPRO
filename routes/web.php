@@ -56,15 +56,17 @@ Route::get('cargo/only', 'WorkerController@onlyCargo')->name('cargo.only');
 Route::get('cargo/search', 'WorkerController@searchCargo')->name('cargo.search');
 
 Route::get('ubigeo/deparment', 'UbigeoController@getDeparment');
+
+//UBIGEO LISTADOS
+Route::get('ubigeo/deparment', 'UbigeoController@getDeparment')->name('ubigeo.deparment');;
+
 Route::get('ubigeo/province', 'UbigeoController@getProvince')->name('ubigeo.province');
+
 Route::get('ubigeo/district', 'UbigeoController@getDistrict')->name('ubigeo.district');
 
-/*
- 
-*/
 Route::get('ubigeo/districtproveedor', 'UbigeoController@ListarDistritoProveedor')->name('ubigeo.districtproveedor');
 
-Route::get('ubigeo/tiposervicio', 'UbigeoController@ListarTipoServicio')->name('ubigeo.tiposervicio');
+Route::get('ubigeo/tiposervicio', 'UbigeoController@ListarTipoServicio')->name('ubigeo.tiposervicio');;
 
 
 //===========INICIO VALIDADO - VIEW PROVEEDOR
