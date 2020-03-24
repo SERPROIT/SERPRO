@@ -1,0 +1,31 @@
+/*
+REQ_PIERR_1
+*/
+
+
+--
+-- Estructura de tabla para la tabla `proveedor`
+--
+
+CREATE TABLE `proveedor` (
+  `id` int(11) NOT NULL,
+  `iddepartamento` int(11) NOT NULL,
+  `idprovincia` int(11) NOT NULL,
+  `iddistrito` int(11) NOT NULL,
+  `idtiposervicio` int(11) NOT NULL,
+  `nombre` varchar(300) NOT NULL,
+  `direccion` varchar(500) NOT NULL,
+  `telefono` varchar(25) NOT NULL,
+  `estado` bit(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+--
+-- Estructura de tabla para la tabla `tiposervicio`
+--
+
+CREATE TABLE `tiposervicio` (
+  `id` int(11) NOT NULL,
+  `nombre` varchar(300) NOT NULL,
+  `estado` varchar(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

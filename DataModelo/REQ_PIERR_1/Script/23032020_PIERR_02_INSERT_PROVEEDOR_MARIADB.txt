@@ -1,0 +1,19 @@
+/*
+REQ_PIERR_1
+*/
+
+--
+-- Volcado de datos para la tabla `tiposervicio`
+--
+
+INSERT INTO `tiposervicio` (`id`, `nombre`, `estado`) VALUES
+(1, 'REPUESTO DE COCINA', '1'),
+(2, 'REPARACION DE TARJETA', '1'),
+(3, 'REPUESTO DE COMPRA', '1'),
+(4, 'REPUESTO DE LAVADORA', '1'),
+(5, 'REPUESTO DE REFRIGERADORA', '1'),
+(6, 'REPUESTO DE AIRE ACONDICIONADO', '1'),
+(7, 'VENTAS DE AIRE ACONDICIONADO Y', '0'),
+(8, 'PRUEBA ORNILLAS', '0'),
+(9, 'PRUEBA 2', '0'),
+(10, 'REPUESTO DE TUBOS DE LAMINA', '0')

@@ -15,21 +15,13 @@ Route::get('/', function () {
     return view('principal');
 });
 
-// Route::get('/navbar', function () {
-//     return view('partial.navbar');
-// });
-
 
 Route::get('cliente', 'ClientController@index');
-Route::get('proveedor', 'ProveedorController@index');
+
 Route::get('worker', 'WorkerController@index');
 Route::get('login', 'UserController@index');
 Route::get('inicio', 'InicioController@index');
-
-
-
 Route::get('cliente', 'ClientController@index')->name('cliente.index');
-// Route::get('cliente', 'ClientController@index')->name('worker.index');
 Route::get('user/cerrar', 'UserController@closeSession');
 
 Route::post('client/save', 'ClientController@saveClient')->name('client.save');
@@ -51,12 +43,6 @@ Route::get('worker/search', 'WorkerController@searchWorker')->name('worker.searc
 
 Route::get('user/validate', 'UserController@validateUser')->name('user.validate');
 
-//RProveedor
-// Route::post('proveedor/save', 'ProveedorController@saveProveedor')->name('proveedor.save');
-// Route::post('proveedor/update', 'ProveedorController@updateClient')->name('proveedor.update');
-// Route::get('proveedor/lista', 'ProveedorController@getListProveedor')->name('proveedor.list');
-// Route::post('proveedor/delete', 'ProveedorController@deleteProveedor')->name('proveedor.delete');
-
 Route::get('permiso/menu', 'WorkerController@getListMenu');
 Route::get('permiso/permiso', 'WorkerController@getListMenuPermiso');
 Route::post('permiso/registrar', 'WorkerController@savePermiso')->name('permiso.save');
@@ -69,39 +55,43 @@ Route::post('cargo/delete', 'WorkerController@deleteCargo')->name('cargo.delete'
 Route::get('cargo/only', 'WorkerController@onlyCargo')->name('cargo.only');
 Route::get('cargo/search', 'WorkerController@searchCargo')->name('cargo.search');
 
-
 Route::get('ubigeo/deparment', 'UbigeoController@getDeparment');
 Route::get('ubigeo/province', 'UbigeoController@getProvince')->name('ubigeo.province');
 Route::get('ubigeo/district', 'UbigeoController@getDistrict')->name('ubigeo.district');
 
-//RMarcaciones
+/*
+ 
+*/
+Route::get('ubigeo/districtproveedor', 'UbigeoController@ListarDistritoProveedor')->name('ubigeo.districtproveedor');
 
-// Route::get('asistencia', 'AsistenciaController@index');
-// Route::post('asistencia/save', 'AsistenciaController@RegistrarMarcacionUsuario')->name('asistencia.save');
+Route::get('ubigeo/tiposervicio', 'UbigeoController@ListarTipoServicio')->name('ubigeo.tiposervicio');
 
-// // Route::get('asistencia/lista', 'AsistenciaController@getListProveedor')->name('asistencia.list');
 
-// Route::post('asistencia/delete', 'AsistenciaController@deleteProveedor')->name('asistencia.delete');
+//===========INICIO VALIDADO - VIEW PROVEEDOR
+Route::get('proveedor', 'ProveedorController@index');
 
-// Route::get('asistencia/busqusuario', 'AsistenciaController@BusquedaUsuarioMarcacion')->name('asistencia.busqusuario');
+Route::post('proveedor/save', 'ProveedorController@RegistroDatosProveedor')->name('proveedor.save');
 
-// Route::get('asistencia/valuser', 'AsistenciaController@ValidarContrasenaUsuario')->name('asistencia.valuser');
-
-// Route::get('asistencia/lista', 'AsistenciaController@HistorialMarcacionList')->name('asistencia.list');
-
-//RProveedores
-// Route::get('proveedor', 'ProveedorController@index');
-
-Route::post('proveedor/save', 'ProveedorController@saveProveedor')->name('proveedor.save');
 Route::get('proveedor/lista', 'ProveedorController@getListProveedor')->name('proveedor.list');
+
 Route::post('proveedor/delete', 'ProveedorController@deleteProveedor')->name('proveedor.delete');
+
 Route::get('proveedor/only', 'ProveedorController@onlyProveedor')->name('proveedor.only');
+
 Route::post('proveedor/update', 'ProveedorController@updateProveedor')->name('proveedor.update');
 
+//MODAL MANTENIMIENTO PROVEEDOR
+Route::post('proveedor/saveservicio', 'ProveedorController@RegistrarServicioMantenimiento')->name('proveedor.saveservicio');
 
+Route::post('proveedor/updateservicio', 'ProveedorController@ActualizarServicioMantenimiento')->name('proveedor.updateservicio');
 
-/*
-Route::get('user/{id}/{name?}', function ($id, $name=null) {
-    //
-})->where(['id' => '[0-9]+', 'name' => '[a-z]+']);
-*/
+Route::get('proveedor/listservicio', 'ProveedorController@ListarRegistroServicioDt')->name('proveedor.listservicio');
+
+Route::post('proveedor/deleteservicio', 'ProveedorController@EliminarSerivicioMantenimiento')->name('proveedor.deleteservicio');
+
+Route::get('proveedor/onlpro', 'ProveedorController@OnlyProveedorMantenimiento')->name('proveedor.onlpro');
+
+Route::get('proveedor/search', 'ProveedorController@BusquedaProveedorMantenimiento')->name('proveedor.search');
+//===FIN MODAL
+
+//==== FIN VALIDADO PROVEEDOR

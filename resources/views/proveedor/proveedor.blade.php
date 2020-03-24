@@ -1,20 +1,37 @@
+/*
+	N° : REQ_PIERR_1
+	GESTION: PROVEEDOR
+	AUTOR: PIERR GRIMALDO VIDALON
+	FECHA ACTUALIZADO: 2020-03-23
+	FUNCION: Vista que permitirá gestionar el registro de proveedores, junto con un mantenimiento de agregar tipos de proveedores 
+			 en el TIPO PROVEEDOR.
+*/
+
 @extends('principal')
 
 @section('scripts')
     <script src="{{asset('js/global_assets/plugins/tables/datatables/datatables.min.js')}}"></script>
     <script src="{{asset('js/global_assets/plugins/tables/datatables/extensions/fixed_columns.min.js')}}"></script>
 
+    <script src="{{asset('js/global_assets/plugins/notifications/sweet_alert.min.js')}}"></script>
+    <script src="{{asset('js/global_assets/plugins/forms/selects/bootstrap_multiselect.js')}}"></script>
+
     <script src="{{asset('js/global_assets/plugins/extensions/jquery_ui/interactions.min.js')}}"></script>
     <script src="{{asset('js/global_assets/plugins/forms/selects/select2.min.js')}}"></script>
     <script src="{{asset('js/global_assets/demo_pages/form_select2.js')}}"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.11.4/sweetalert2.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/6.11.4/sweetalert2.min.css">
+    <script src="{{asset('js/global_assets/plugins/forms/styling/uniform.min.js')}}"></script>
+    <script src="{{asset('js/global_assets/plugins/forms/styling/switchery.min.js')}}"></script>
+    <script src="{{asset('js/global_assets/plugins/forms/styling/switch.min.js')}}"></script>
+    <script src="{{asset('js/global_assets/demo_pages/form_checkboxes_radios.js')}}"></script>
 
+    <script src="{{asset('js/global_assets/demo_pages/extra_sweetalert.js')}}"></script>
     <script src="{{asset('js/global_assets/demo_pages/datatables_extension_fixed_columns.js')}}"></script>
 @stop
 
 @section('content')
+
+
 <div class="content">
     <div class="card" >
 
@@ -25,19 +42,11 @@
                     <legend class="text-uppercase font-size-sm font-weight-bold">REGISTRO DE NUEVO PROVEEDOR</legend>
 
                     <div class="form-group row">
-                        <label class="col-form-label col-lg-2">NOMBRES</label>
+                        <label class="col-form-label col-lg-2">NOMBRE PROVEEDOR</label>
                         <div class="col-lg-10">
                             <input type="text" name="nombres" class="form-control" placeholder="Ingresar Nombres">
                         </div>
                     </div>
-
-                    {{-- <div class="form-group row">
-                        <label class="col-form-label col-lg-2">TIPO PROVEEDOR</label>
-                        <div class="col-lg-10">
-                            <select id="cmbTipoProveedor"  data-placeholder="TipoProveedor" class="form-control select-search" data-fouc>
-                             </select>
-                        </div>
-                    </div> --}}
 
                     <div class="form-group row">
                         <label class="col-form-label col-lg-2">DEPARTAMENTO</label>
@@ -62,6 +71,18 @@
                              </select>
                         </div>
                     </div>
+
+                    <div class="form-group row">
+                        <label class="col-form-label col-lg-2">TIPO DE PROVEEDOR</label>
+                        <div class="col-lg-8">
+                            <select id="cmbTipoServicio" data-placeholder="Servicio" class="form-control select-search" data-fouc>
+                             </select>
+                        </div>
+                        <div class="col-lg-2">
+                            <button type="submit" name="cargar" class="btn btn-primary"  data-toggle="modal" data-target="#modal_scrollable">Agregar<i class="icon-plus-circle2 ml-2"></i></button>
+                        </div>
+                    </div>
+
 
                     <div class="form-group row">
                         <label class="col-form-label col-lg-2">TELEFONO</label>
@@ -91,6 +112,60 @@
         </div>
     </div>
 
+        <!-- Scrollable modal Cargo-->
+        <div id="modal_scrollable" class="modal fade" tabindex="-1">
+            <div class="modal-dialog modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header pb-3">
+                        <h5 class="modal-title">MANTENIMIENTO DE PROVEEDOR</h5>
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+
+
+                    <div class="modal-body py-0">
+                        <input type="hidden" id="accioncargo">
+                        <input type="hidden" id="idcargo">
+                        <div id="cardFormularioCargo" style="display: none;">
+                            <div class="form-group row">
+                                <label class="col-form-label col-lg-2">SERVICIOS</label>
+                                <div class="col-lg-10">
+                                    <input type="text" name="nombrecargo" class="form-control" placeholder="Ingresar Servicio">
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <button type="submit" name="cmbGuardarServicio" class="btn btn-primary">Guardar <i class="icon-paperplane ml-2"></i></button>
+                                <button type="submit" name="cmbCancelarServicio" class="btn btn-secondary">Cancelar <i class="icon-paperplane ml-2"></i></button>
+                            </div>
+                            <br>
+                        </div>
+
+                        <div class="card-body" id="cardAgregarCargo">
+                            <div class="text-left">
+                                <button type="submit" name="agregarcargo" class="btn btn-primary">Agregar Proveedor <i class="icon-file-plus ml-2"></i></button>
+                            </div>
+                        </div>
+
+                        <table id="tblServicio" class="table text-center" width="100%">
+                            <thead class="btn-secondary">
+                                <tr>
+                                    <th>TIPO PROVEEDOR</th>
+                                    <th>ACCION</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="modal-footer pt-3">
+                        <button type="button" class="btn btn-link" data-dismiss="modal">Cerrar</button>
+                        <!-- <button type="button" class="btn bg-primary">Save changes</button> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /scrollable modal Cargo-->
 
     <!-- Multiple fixed columns -->
     <div class="card">
@@ -98,9 +173,8 @@
             <thead>
                 <tr>
                     <th>Nombres</th>
-                    <th>Departamento</th>
-                    <th>Provincia</th>
                     <th>Distrito</th>
+                    <th>Servicio</th>
                     <th>Telefono</th>
                     <th>Direccion</th>
                     <th></th>
@@ -116,6 +190,13 @@
 <script>
 
     $(document).ready(function(){
+        // Defaults
+        var swalInit = swal.mixin({
+                buttonsStyling: false,
+                confirmButtonClass: 'btn btn-primary',
+                cancelButtonClass: 'btn btn-light'
+            });
+        //var resultMessage
 
         $.ajaxSetup({
             headers: {
@@ -123,7 +204,10 @@
             }
         });
 
-      var _tblProveedor =  $('#tblProveedor').DataTable({
+        ListarTipoServicioProveedor();
+
+//TABLA PROVEEDOR
+        var _tblProveedor =  $('#tblProveedor').DataTable({
             scrollX: true,
             scrollY: '350px',
             scrollCollapse: true,
@@ -136,9 +220,8 @@
             },
             columns: [
                 { "data": "nombre" },
-                { "data": "iddepartamento" },
-                { "data": "idprovincia" },
                 { "data": "iddistrito" },
+                { "data": "idtiposervicio" },
                 { "data": "telefono" },
                 { "data": "direccion" },
                 {
@@ -146,7 +229,7 @@
                    "render": function (id) {
                         var btnEliminar = "<button type='button' name="+id+" class='btn btn-danger rounded-round'><i class='icon-bin'></i></button>";
                         var btnActulizar = "<button type='button' name="+id+" class='btn btn-primary rounded-round'><i class='icon-compose'></i></button>";
-                       return btnEliminar+" "+btnActulizar;
+                        return btnEliminar+" "+btnActulizar;
                    }
                 }
             ],
@@ -177,46 +260,91 @@
             },
         });
 
+//MODAL MANTENIMIENTO
+        var _tblServicio =  $('#tblServicio').DataTable({
+            scrollX: true,
+            scrollY: '350px',
+            scrollCollapse: true,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                "url": "{{  route('proveedor.listservicio') }}",
+                "type": "GET",
+                "datatype": 'JSON',
+
+            },
+            columns: [
+                { "data": "nombre" },
+                {
+                   "data": 'id',
+                   "render": function (id) {
+                        var btnModificar = '<button  class="btn btn-outline-primary" name="'+id+'">Modificar</button>'
+                        var btnEliminar = '<button  class="btn btn-outline-danger" name="'+id+'">Eliminar</button>'
+                       return btnEliminar+' '+btnModificar;
+                   }
+                }
+
+            ],
+            language: {
+                "searchPlaceholder": "Busqueda ...",
+                "decimal": "",
+                "emptyTable": "No hay información",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ Entradas",
+                "infoEmpty": "Mostrando 0 to 0 of 0 Entradas",
+                "infoFiltered": "(Filtrado de _MAX_ total entradas)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Mostrar _MENU_ Entradas",
+                "loadingRecords": "Cargando...",
+                "processing": "Procesando...",
+                "search": "Buscar: ",
+                "zeroRecords": "Sin resultados encontrados",
+                "paginate": {
+                    "first": "Primero",
+                    "last": "Ultimo",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                }
+            },
+        });
+
         $("button[name=guardar]").click(function(){
             //#region  Validaciones de Controles
             var _S_INPUT_VACIO ="";
-            var _S_INGRESO_NOMBRE_PROVEEDOR = "Favor de ingresar un nombre.";
-            var _S_INGRESO_DEPARTAMENTO_PROVEEDOR = "Favor de seleccionar un Departamento.";
-            var _S_INGRESO_PROVINCIA_PROVEEDOR = "Favor de seleccionar una Provincia.";
-            var _S_INGRESO_DISTRITO_PROVEEDOR = "Favor de seleccionar un Distrito.";
-            var _S_INGRESO_TELEFONO_PROVEEDOR = "Favor de ingresar un telefono.";
-            var _S_INGRESO_DIRECCION_PROVEEDOR = "Favor de ingresar un direccion.";
             //#endregion
             var accion = $("#accion").val()
+            var idservicio = $("input[name=cmbTipoServicio]").val()
             var id = $("#id").val()
             var nombres = $("input[name=nombres]").val()
             var departamento = $("#cmbDepartamento").val()
             var provincia = $("#cmbProvincia").val()
             var distrito = $("#cmbDistrito").val()
+            var tiposervicio = $("#cmbTipoServicio").val()
             var telefono = $("input[name=telefono]").val()
             var direccion = $("textarea[name=direccion]").val()
 
-            var objproveedor = {name:nombres, iddepartment:departamento, idprovince:provincia, iddistrict:distrito, addres:direccion, phone:telefono, id:id}
+            var objproveedor = {name:nombres, iddepartamento:departamento , idprovincia:provincia , iddistrict:distrito, idtiposervicio:tiposervicio, addres:direccion, phone:telefono, status:1, id:id}
 
             if($("input[name=nombres]").val() == _S_INPUT_VACIO){
-
-            swal ("Oops!" , " " + _S_INGRESO_NOMBRE_PROVEEDOR + " ", "error")
-
-            }else if (departamento == _S_INPUT_VACIO){
-                swal ( "Oops!" , "" + _S_INGRESO_DEPARTAMENTO_PROVEEDOR + "" ,  "error" )
-            }else if(provincia == _S_INPUT_VACIO){
-                swal ( "Oops!" , "" + _S_INGRESO_PROVINCIA_PROVEEDOR + "",  "error" )
+                MensajeError('Recuerda', 'Ingresar el nombre del proveedor.')
+                return false
             }else if(distrito == _S_INPUT_VACIO){
-                swal ( "Oops!" , "" + _S_INGRESO_DISTRITO_PROVEEDOR + "",  "error" )
+                MensajeError('Recuerda', 'Seleccionar un distrito.')
+                return false
+            }else if(tiposervicio == _S_INPUT_VACIO){
+                MensajeError('Recuerda', 'Selecceionar un tipo de servicio.')
+                return false
             }else if(telefono == _S_INPUT_VACIO){
-                swal ( "Oops!" , "" + _S_INGRESO_TELEFONO_PROVEEDOR + "",  "error" )
+                MensajeError('Recuerda', 'Ingresar un telefono.')
+                return false
             }else if(direccion == _S_INPUT_VACIO){
-                swal ( "Oops!" , "" + _S_INGRESO_DIRECCION_PROVEEDOR + "",  "error" )
+                MensajeError('Recuerda', 'Ingresar una dirección.')
+                return false
             }else{
                 if(accion == "registrar"){
-                RegistrarProveedor(objproveedor)
+                    RegistrarProveedor(objproveedor);
                 }else if(accion == "modificar"){
-                    ModificarProveedor(objproveedor)
+                    ModificarProveedor(objproveedor);
                 }
             }
 
@@ -251,35 +379,80 @@
              $("#cardAgregarProveedor").css("display", "inline")
         });
 
-        // $.ajax({
-        //     type: 'GET',
-        //     url: "{{ URL::to('ubigeo/tproveedor')}}",
-        //     datatype: 'JSON',
-        //     success:function(data){
-        //         var lista = [];
-        //         $.each(data, function (i, data) {
-        //             var option = {id:data.id,text:data.nombre}
-        //             lista[i] = option
-        //         });
-        //         $('#cmbTipoProveedor').select2({ data: lista });
-        //     },
-        //     error:function(data){
-        //         console.log(data);
-        //     }
-        // });
+        // MODAL
+        $('#modal_scrollable').on('show.bs.modal', function (e) {
+            $("#accioncargo").val('registrar');
+           _tblServicio.ajax.reload();
+           _tblProveedor.ajax.reload();
+        });
 
+        $('#modal_scrollable').on('hidden.bs.modal', function () {
+            ListarTipoServicioProveedor();
+        });
+
+
+        $('#tblServicio tbody').on( 'click','button.btn-outline-primary', function () {
+         debugger;
+             var id = $(this)[0].name
+             ObtenerServicioMantenimiento(id)
+             $("#cardFormularioCargo").css("display", "inline")
+             $("#cardAgregarCargo").css("display", "none")
+        });
+
+
+        $('#tblServicio tbody').on( 'click','button.btn-outline-danger', function () {
+             var id = $(this)[0].name
+             MensajeEliminarConfirm('Estas Seguro?', 'Este proveedor se eliminara.',id)
+             return false;
+             LimpiarFormularioServicio();
+        });
+
+        $("button[name=agregarcargo]").click(function(){
+             $("#accioncargo").val("registrar")
+             $("#cardFormularioCargo").css("display", "inline")
+             $("#cardAgregarCargo").css("display", "none")
+        });
+
+        $("button[name=cmbGuardarServicio]").click(function(){
+            debugger;
+            var accion = $("#accioncargo").val()
+            var id = $("#idcargo").val()
+            var servicio = $("input[name=nombrecargo]").val();
+            var _S_VALIDAR_SERVICIO = "Ingresar el proveedor";
+
+            servicio = servicio.toUpperCase()
+
+            if(servicio.trim().length == 0){
+                MensajeError('Recuerda', _S_VALIDAR_SERVICIO)
+                return false
+            }
+
+            var servicioList = {servicio:servicio, id:id}
+
+            BusquedaServicioMantenimiento(servicio.trim(), accion, servicioList)
+
+            $("#cardFormularioCargo").css("display", "none")
+            $("#cardAgregarCargo").css("display", "inline")
+            LimpiarFormularioServicio();
+
+        });
+
+        $("button[name=cmbCancelarServicio]").click(function(){
+            LimpiarFormularioServicio()
+             $("#cardFormularioCargo").css("display", "none")
+             $("#cardAgregarCargo").css("display", "inline")
+        });
+
+        //DEPARTAMENTO
+        debugger;
         $.ajax({
             type: 'GET',
-            url: "{{ URL::to('ubigeo/deparment')}}",
+            url: "{{ route('ubigeo.deparment') }}",
             datatype: 'JSON',
             success:function(data){
-
                 var lista = [];
-
                 $.each(data, function (i, data) {
-
                     var option = {id:data.id,text:data.nombre}
-
                     lista[i] = option
 
                 });
@@ -292,182 +465,350 @@
             }
         });
 
-
-
+        //RELACION DE FILTROS DE PROVINCIAS
         $('#cmbDepartamento').on('change', function() {
-
-          getProvince($(this).val())
-
+            getProvince($(this).val())
         });
 
         $('#cmbProvincia').on('change', function() {
-
-          getDistrict($(this).val(),$('#cmbDepartamento').val())
-
+            getDistrict($(this).val(),$('#cmbDepartamento').val())
         });
 
-        function getProvince(id){
-
-            $.ajax({
-                url: "{{  route('ubigeo.province') }}",
-                type: 'GET',
-                data: { 'id':id},
-                datatype: 'JSON',
-                success:function(data){
-
-                        var lista = [];
-
-                        $.each(data, function (i, data) {
-
-                            var option = {id:data.id,text:data.nombre}
-
-                            lista[i] = option
-
-                        });
-                        $('#cmbProvincia').empty();
-                        $('#cmbProvincia').select2({ data: lista });
-                        getDistrict($('#cmbProvincia').val(),$('#cmbDepartamento').val());
-                    },
-                    error:function(data){
-                        console.log(data);
-                    }
-             });
+//ALERTAS VALIDACION
+        function LimpiarFormularioServicio(){
+            $("#accioncargo").val('')
+            $("input[name=nombrecargo]").val('')
         }
 
-        function getDistrict(idprovince,iddepartment){
 
-            $.ajax({
-                url: "{{  route('ubigeo.district') }}",
-                type: 'GET',
-                data: { idprovince:idprovince, iddepartment: iddepartment},
-                datatype: 'JSON',
-                success:function(data){
-
-                        var lista = [];
-
-                        $.each(data, function (i, data) {
-
-                            var option = {id:data.id,text:data.nombre}
-
-                            lista[i] = option
-
-                        });
-                        $('#cmbDistrito').empty();
-                        $('#cmbDistrito').select2({ data: lista });
-
-                    },
-                    error:function(data){
-                        console.log(data);
-                    }
+        function MensajeError(titulo, mensaje){
+            swalInit.fire({
+                    title: titulo,
+                    text: mensaje,
+                    type: 'error'
             });
         }
 
-        function RegistrarProveedor(objproveedor){
-
-            $.ajax({
-                url: "{{  route('proveedor.save') }}",
-                type: 'POST',
-                data: objproveedor,
-                datatype: 'JSON',
-                success:function(data){
-                        if(data){alert('Proveedor Registrado')}
-                        _tblProveedor.ajax.reload();
-                    },
-                    error:function(data){
-                        console.log(data);
-                    }
-                });
+        function MensajeCorrecto(titulo, mensaje){
+            swalInit.fire({
+                title: titulo,
+                text: mensaje,
+                type: 'success'
+            });
         }
 
-        function ModificarProveedor(objproveedor){
+        function MensajeInformacion(titulo, mensaje){
+            swalInit.fire({
+                title: titulo,
+                text: mensaje,
+                type: 'info'
+            });
+        }
+//FIN ALERTAS
+        function MensajeEliminarConfirm(titulo, mensaje, id){
+debugger;
+            swalInit.fire({
+                title: titulo,
+                text: mensaje,
+                type: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Si, Eliminar!',
+                cancelButtonText: 'No, Cancelar!',
+                confirmButtonClass: 'btn btn-danger',
+                cancelButtonClass: 'btn btn-info',
+                buttonsStyling: false
+            }).then(function(result) {
+                if (result.value){
+                    EliminarServicioMantenimiento(id)
+                }else{
+                    console.log('message_id=>',id)
+                }
 
+            });
+
+       }
+//MANTENIMIENTO MODAL
+    function BusquedaServicioMantenimiento(servicio, accion, servicioList){
             $.ajax({
-                url: "{{  route('proveedor.update') }}",
-                type: 'POST',
-                data: objproveedor,
+                type: 'GET',
+                url: "{{  route('proveedor.search') }}",
+                data: {servicio:servicio},
                 datatype: 'JSON',
                 success:function(data){
-                        if(data){alert('Proveedor Modificado')}
-                        _tblProveedor.ajax.reload();
-                    },
-                    error:function(data){
-                        console.log(data);
+                    var band = false
+                    var _S_SERVICIO_EXISTENTE = "Este proveedor ya existe";
+                    if(data.length == 1){
+                        MensajeInformacion('Recuerda', _S_SERVICIO_EXISTENTE);
+                        band = true
+                        return false
+                    }
+
+                    if(accion == "registrar" &&  band == false){
+                        RegistrarServicioMantenimiento(servicioList)
+                    }else if(accion == "modificar"){
+                        ModificarCargo(servicioList)
+                    }
+
+                },
+                error:function(data){
+                    console.log(data);
+                }
+            });
+        }
+
+    function ModificarCargo(servicioList){
+
+        $.ajax({
+            url: "{{  route('proveedor.updateservicio') }}",
+            type: 'POST',
+            data: servicioList,
+            datatype: 'JSON',
+            success:function(data){
+                _tblServicio.ajax.reload();
+                    if(data){
+                        MensajeCorrecto('Excelente!', 'Proveedor actualizado correctamente.');
+                        return false;
+                    }
+                },
+                error:function(data){
+                    console.log('error===>',data)
+                }
+            });
+    }
+
+    function ObtenerServicioMantenimiento(id){
+        $.ajax({
+            url: "{{  route('proveedor.onlpro') }}",
+            type: 'GET',
+            data: { 'id':id},
+            datatype: 'JSON',
+            success:function(data){
+debugger;
+                    $("#accioncargo").val('modificar')
+                    $("#idcargo").val(data[0].id)
+                    $("input[name=nombrecargo]").val(data[0].nombre)
+
+                },
+                error:function(data){
+                    console.log(data);
+                }
+            });
+    }
+
+    function RegistrarServicioMantenimiento(servicioList){
+        $.ajax({
+                url: "{{  route('proveedor.saveservicio') }}",
+                type: 'POST',
+                data: servicioList,
+                datatype: 'JSON',
+                success:function(data){
+                    _tblServicio.ajax.reload();
+                        var _S_SERVICIO_REGISTRADO = "Proveedor registrado.";
+                        if(data){
+                            MensajeCorrecto('Excelente!', _S_SERVICIO_REGISTRADO);
+                            return false;
+                            $('input[name=nombrecargo]').val('');
+                        }
+                },
+                error:function(data){
+                        console.log('error===>',data)
                     }
                 });
             }
 
-        function EliminarProveedor(id){
+    function EliminarServicioMantenimiento(id){
+debugger;
+        $.ajax({
+            url: "{{  route('proveedor.deleteservicio') }}",
+            type: 'POST',
+            data: {id:id},
+            datatype: 'JSON',
+            success:function(data){
+                _tblServicio.ajax.reload();
+                    if(data){
+                        MensajeCorrecto('Bien!', 'Proveedor eliminado correctamente');
+                        return false;
+                        $("input[name=nombrecargo]").val('')
 
-            $.ajax({
-                url: "{{  route('proveedor.delete') }}",
-                type: 'POST',
-                data: {id:id},
-                datatype: 'JSON',
-                success:function(data){
-                        console.log(data)
-                         if(data){alert('Proveedor Eliminado')}
-                         _tblProveedor.ajax.reload();
-                    },
-                    error:function(data){
-                        console.log(data);
                     }
-                });
+                },
+                error:function(data){
+                    console.log(data);
+                }
+        });
+    }
+
+//FIN MODAL
+
+    //PRVINCIA
+    function getProvince(id){
+
+        $.ajax({
+            url: "{{  route('ubigeo.province') }}",
+            type: 'GET',
+            data: { 'id':id},
+            datatype: 'JSON',
+            success:function(data){
+
+                    var lista = [];
+                    var seleccione = {id:0, text:'---SELECCIONE---'}
+                    lista[0] = seleccione
+                    $.each(data, function (i, data) {
+                        var option = {id:data.id,text:data.nombre}
+                        lista[i] = option
+                    });
+                    $('#cmbProvincia').empty();
+                    $('#cmbProvincia').select2({ data: lista });
+                    getDistrict($('#cmbProvincia').val(),$('#cmbDepartamento').val());
+                },
+                error:function(data){
+                    console.log(data);
+                }
+        });
+    }
+
+    // DISTRITO
+    function getDistrict(idprovince,iddepartment){
+        $.ajax({
+        url: "{{  route('ubigeo.districtproveedor') }}",
+        type: 'GET',
+        data: { idprovince:idprovince, iddepartment: iddepartment},
+        datatype: 'JSON',
+        success:function(data){
+            var lista = [];
+            $.each(data, function (i, data) {
+                var option = {id:data.id,text:data.nombre}
+                lista[i] = option
+            });
+            $('#cmbDistrito').empty();
+            $('#cmbDistrito').select2({ data: lista });
+        },
+        error:function(data){
+            console.log(data);
         }
+        });
+    }
 
-        function ActualizarProveedor(id){
+    function ListarTipoServicioProveedor(){
+        // TIPO SERVICIO
+        $.ajax({
+            url: "{{  route('ubigeo.tiposervicio') }}",
+            type: 'GET',
+            datatype: 'JSON',
+            success:function(data){
+                    var lista = [];
+                    $.each(data, function (i, data) {
+                        var option = {id:data.id,text:data.nombre}
+                        lista[i] = option
+                    });
+                    $('#cmbTipoServicio').empty();
+                    $('#cmbTipoServicio').select2({ data: lista });
+                },
+                error:function(data){
+                    console.log(data);
+                }
+        });
+    }
 
-            $.ajax({
-                url: "{{  route('proveedor.delete') }}",
-                type: 'POST',
-                data: {id:id},
-                datatype: 'JSON',
-                success:function(data){
-                        console.log(data)
-                         if(data){alert('Proveedor Eliminado')}
-                         _tblProveedor.ajax.reload();
-                    },
-                    error:function(data){
-                        console.log(data);
+    function RegistrarProveedor(objproveedor){
+debugger;
+        $.ajax({
+            url: "{{  route('proveedor.save') }}",
+            type: 'POST',
+            data: objproveedor,
+            datatype: 'JSON',
+            success:function(data){
+                _tblProveedor.ajax.reload();
+                    if(data){
+                        MensajeCorrecto('Excelente!', 'Se registro correctamente.');
+                        return false;
                     }
-                });
+                },
+                error:function(data){
+                    console.log(data);
+                }
+            });
+    }
+
+    function ModificarProveedor(objproveedor){
+
+        $.ajax({
+            url: "{{  route('proveedor.update') }}",
+            type: 'POST',
+            data: objproveedor,
+            datatype: 'JSON',
+            success:function(data){
+                _tblProveedor.ajax.reload();
+                    if(data){
+                        MensajeCorrecto('Bien!', 'Se modificó correctamente.') }
+                        return false
+                },
+                error:function(data){
+                    console.log(data);
+                }
+            });
         }
 
-        function LimpiarFormulario(){
-             $("input[name=nombres]").val('')
-             $("#cmbDepartamento").val('01').trigger('change');
-             getProvince('01');
-             getDistrict('01','0101')
-             $("input[name=telefono]").val('')
-             $("textarea[name=direccion]").val('')
-        }
+    function EliminarProveedor(id){
+        $.ajax({
+            url: "{{  route('proveedor.delete') }}",
+            type: 'POST',
+            data: {id:id},
+            datatype: 'JSON',
+            success:function(data){
+                _tblProveedor.ajax.reload();
+                    console.log(data)
+                        if(data){
+                            MensajeCorrecto('Bien!', 'Se eliminó correctamente.')
+                            return false
+                        }
+                },
+                error:function(data){
+                    console.log(data);
+                }
+            });
+    }
 
-        function ObtenerProveedor(id){
-            $.ajax({
-                url: "{{  route('proveedor.only') }}",
-                type: 'GET',
-                data: { 'id':id},
-                datatype: 'JSON',
-                success:function(data){
-                        console.log(data);
-                     $("#accion").val('modificar')
-                     $("#id").val(data[0].id)
-                     $("input[name=nombres]").val(data[0].nombre)
-                     $("#cmbDepartamento").val(data[0].iddepartamento).trigger('change')
-                     $("#cmbProvincia").val(data[0].idprovincia).trigger('change')
-                     $("#cmbDistrito").val(data[0].iddistrito).trigger('change')
-                     $("textarea[name=direccion]").val(data[0].direccion)
-                     $("input[name=telefono]").val(data[0].telefono)
-                    },
-                    error:function(data){
-                        console.log(data);
-                    }
-             });
-        }
+    function LimpiarFormulario(){
+            $("input[name=nombres]").val('')
+            $("input[name=telefono]").val('')
+            $("textarea[name=direccion]").val('')
+            $("#accioncargo").val('')
+            $("input[name=nombrecargo]").val('')
 
+            $("#cmbDepartamento").val(0).trigger('change')
+            $("#cmbProvincia").val(0).trigger('change')
+            $("#cmbDistrito").val(0).trigger('change')
+            $("#cmbTipoServicio").val(0).trigger('change')
+    }
+
+    function ObtenerProveedor(id){
+        debugger;
+        $.ajax({
+            url: "{{  route('proveedor.only') }}",
+            type: 'GET',
+            data: { 'id':id},
+            datatype: 'JSON',
+            success:function(data){
+                    console.log(data);
+
+                    $("#accion").val('modificar')
+                    $("#id").val(data[0].id)
+                    $("input[name=nombres]").val(data[0].nombre)
+                    $("#cmbDepartamento").val(data[0].iddepartamento).trigger('change')
+                    $("#cmbProvincia").val(data[0].idprovincia).trigger('change')
+                    $("#cmbDistrito").val(data[0].iddistrito).trigger('change')
+                    $("#cmbTipoServicio").val(data[0].idtiposervicio).trigger('change')
+                    $("textarea[name=direccion]").val(data[0].direccion)
+                    $("input[name=telefono]").val(data[0].telefono)
+                },
+                error:function(data){
+                    console.log(data);
+                }
+            });
+        }
+//FIN DOCUMENT READY
 });
-
-
-
 </script>
 
  @endsection
