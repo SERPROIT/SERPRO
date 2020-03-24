@@ -64,6 +64,11 @@ Route::get('ubigeo/province', 'UbigeoController@getProvince')->name('ubigeo.prov
 
 Route::get('ubigeo/district', 'UbigeoController@getDistrict')->name('ubigeo.district');
 
+//LISTAS PRONVINCIA - DEPARTAMENTO - DISTRITO
+Route::get('ubigeo/lstdeparment', 'UbigeoController@ListaDepartamentoProveedor')->name('ubigeo.lstdeparment');;
+
+Route::get('ubigeo/lstprovince', 'UbigeoController@ListaProvinciaProveedor')->name('ubigeo.lstprovince');
+
 Route::get('ubigeo/districtproveedor', 'UbigeoController@ListarDistritoProveedor')->name('ubigeo.districtproveedor');
 
 Route::get('ubigeo/tiposervicio', 'UbigeoController@ListarTipoServicio')->name('ubigeo.tiposervicio');;

@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\DB;
     public function getDeparment()
     {
         try{
-            $departments = DB::select('CALL sp_S_ListarDepartamento()');
+            $departments = DB::select('select id,nombre from departamento');
             return $departments;
         }
         catch (MySQLDuplicateKeyException $e) {
@@ -35,7 +35,7 @@ use Illuminate\Support\Facades\DB;
     public function getProvince($iddepartment)
     {
         try {
-            $provinces = DB::select('CALL sp_S_ListarPronvinciaProveedor(?)',[$iddepartment]);
+            $provinces = DB::select('select id,nombre from provincia where iddepartamento = ?',[$iddepartment]);
             return $provinces;
         }
         catch (MySQLDuplicateKeyException $e) {
@@ -50,6 +50,48 @@ use Illuminate\Support\Facades\DB;
 
     }
 
+    public function getDistrict($idprovince, $iddepartment)
+    {
+        $districts = DB::select('select id,nombre from distrito where idprovincia = ? and iddepartamento = ?', [ $idprovince, $iddepartment]);
+        return $districts;
+    }
+
+
+    //lista proveedor
+    public function ListaDepartamentoProveedor()
+    {
+        try{
+            $departments = DB::select('CALL sp_S_ListarDepartamento()');
+            return $departments;
+        }
+        catch (MySQLDuplicateKeyException $e) {
+            $e->getMessage();
+        }
+        catch (MySQLException $e) {
+            $e->getMessage();
+        }
+        catch (Exception $e) {
+            $e->getMessage();
+        }
+    }
+
+    public function ListaProvinciaProveedor($iddepartment)
+    {
+        try {
+            $provinces = DB::select('CALL sp_S_ListarPronvinciaProveedor(?)',[$iddepartment]);
+            return $provinces;
+        }
+        catch (MySQLDuplicateKeyException $e) {
+            $e->getMessage();
+        }
+        catch (MySQLException $e) {
+            $e->getMessage();
+        }
+        catch (Exception $e) {
+            $e->getMessage();
+        }
+
+    }
 
 
     public function ListarDistritoProveedor($idprovince, $iddepartment )

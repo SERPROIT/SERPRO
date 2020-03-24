@@ -38,6 +38,21 @@ use App\Http\Repositories\UbigeoRepository;
         return response()->json($n);
     }
 
+    //listas proveedor
+    public function ListaDepartamentoProveedor()
+    {
+          $oUbigeo = new UbigeoRepository();
+          $n = $oUbigeo->ListaDepartamentoProveedor();
+        return response()->json($n);
+    }
+
+    public function ListaProvinciaProveedor(Request $request)
+    {
+        $oUbigeo = new UbigeoRepository();
+        $n = $oUbigeo->ListaProvinciaProveedor($request->id);
+        return response()->json($n);
+    }
+
     public function ListarDistritoProveedor(Request $request)
     {
         $oUbigeo = new UbigeoRepository();

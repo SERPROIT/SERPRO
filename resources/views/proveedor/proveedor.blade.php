@@ -3,7 +3,7 @@
 	GESTION: PROVEEDOR
 	AUTOR: PIERR GRIMALDO VIDALON
 	FECHA ACTUALIZADO: 2020-03-23
-	FUNCION: Vista que permitirá gestionar el registro de proveedores, junto con un mantenimiento de agregar tipos de proveedores 
+	FUNCION: Vista que permitirá gestionar el registro de proveedores, junto con un mantenimiento de agregar tipos de proveedores
 			 en el TIPO PROVEEDOR.
 */
 
@@ -447,7 +447,7 @@
         debugger;
         $.ajax({
             type: 'GET',
-            url: "{{ route('ubigeo.deparment') }}",
+            url: "{{ route('ubigeo.lstdeparment') }}",
             datatype: 'JSON',
             success:function(data){
                 var lista = [];
@@ -644,7 +644,7 @@ debugger;
     function getProvince(id){
 
         $.ajax({
-            url: "{{  route('ubigeo.province') }}",
+            url: "{{  route('ubigeo.lstprovince') }}",
             type: 'GET',
             data: { 'id':id},
             datatype: 'JSON',
