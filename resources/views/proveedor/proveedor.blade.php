@@ -1,12 +1,3 @@
-/*
-	N° : REQ_PIERR_1
-	GESTION: PROVEEDOR
-	AUTOR: PIERR GRIMALDO VIDALON
-	FECHA ACTUALIZADO: 2020-03-23
-	FUNCION: Vista que permitirá gestionar el registro de proveedores, junto con un mantenimiento de agregar tipos de proveedores
-			 en el TIPO PROVEEDOR.
-*/
-
 @extends('principal')
 
 @section('scripts')
@@ -71,6 +62,14 @@
                              </select>
                         </div>
                     </div>
+
+                    {{-- <div class="form-group row">
+                        <label class="col-form-label col-lg-2">DISTRITO</label>
+                        <div class="col-lg-10">
+                            <select id="cmbDistrito"  data-placeholder="Distrito" class="form-control select-search" data-fouc>
+                             </select>
+                        </div>
+                    </div> --}}
 
                     <div class="form-group row">
                         <label class="col-form-label col-lg-2">TIPO DE PROVEEDOR</label>
@@ -174,7 +173,7 @@
                 <tr>
                     <th>Nombres</th>
                     <th>Distrito</th>
-                    <th>Servicio</th>
+                    <th>Tipo Proveedor</th>
                     <th>Telefono</th>
                     <th>Direccion</th>
                     <th></th>
@@ -309,9 +308,7 @@
         });
 
         $("button[name=guardar]").click(function(){
-            //#region  Validaciones de Controles
             var _S_INPUT_VACIO ="";
-            //#endregion
             var accion = $("#accion").val()
             var idservicio = $("input[name=cmbTipoServicio]").val()
             var id = $("#id").val()
@@ -444,7 +441,7 @@
         });
 
         //DEPARTAMENTO
-        debugger;
+debugger;
         $.ajax({
             type: 'GET',
             url: "{{ route('ubigeo.lstdeparment') }}",
@@ -583,7 +580,7 @@ debugger;
             data: { 'id':id},
             datatype: 'JSON',
             success:function(data){
-debugger;
+
                     $("#accioncargo").val('modificar')
                     $("#idcargo").val(data[0].id)
                     $("input[name=nombrecargo]").val(data[0].nombre)
@@ -644,7 +641,7 @@ debugger;
     function getProvince(id){
 
         $.ajax({
-            url: "{{  route('ubigeo.lstprovince') }}",
+            url: "{{  route('ubigeo.province') }}",
             type: 'GET',
             data: { 'id':id},
             datatype: 'JSON',
@@ -669,28 +666,32 @@ debugger;
 
     // DISTRITO
     function getDistrict(idprovince,iddepartment){
+        console.log('provincia: ' + idprovince + ','+ 'departamento: ' + iddepartment)
         $.ajax({
-        url: "{{  route('ubigeo.districtproveedor') }}",
+        url: "{{  route('ubigeo.district') }}",
         type: 'GET',
         data: { idprovince:idprovince, iddepartment: iddepartment},
         datatype: 'JSON',
         success:function(data){
             var lista = [];
+            var seleccione = {id:0, text:'---SELECCIONE---'}
+            lista[0] = seleccione
             $.each(data, function (i, data) {
                 var option = {id:data.id,text:data.nombre}
                 lista[i] = option
             });
-            $('#cmbDistrito').empty();
             $('#cmbDistrito').select2({ data: lista });
+            $('#cmbDistrito').empty();
+
         },
-        error:function(data){
-            console.log(data);
-        }
+            error:function(data){
+                console.log(data);
+            }
         });
     }
 
+    // TIPO SERVICIO
     function ListarTipoServicioProveedor(){
-        // TIPO SERVICIO
         $.ajax({
             url: "{{  route('ubigeo.tiposervicio') }}",
             type: 'GET',
@@ -701,8 +702,9 @@ debugger;
                         var option = {id:data.id,text:data.nombre}
                         lista[i] = option
                     });
-                    $('#cmbTipoServicio').empty();
                     $('#cmbTipoServicio').select2({ data: lista });
+                    $('#cmbTipoServicio').empty();
+
                 },
                 error:function(data){
                     console.log(data);
