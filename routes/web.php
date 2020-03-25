@@ -92,11 +92,34 @@ Route::get('ubigeo/district', 'UbigeoController@getDistrict')->name('ubigeo.dist
 //RProveedores
 // Route::get('proveedor', 'ProveedorController@index');
 
-Route::post('proveedor/save', 'ProveedorController@saveProveedor')->name('proveedor.save');
+// Route::post('proveedor/save', 'ProveedorController@saveProveedor')->name('proveedor.save');
+// Route::get('proveedor/lista', 'ProveedorController@getListProveedor')->name('proveedor.list');
+// Route::post('proveedor/delete', 'ProveedorController@deleteProveedor')->name('proveedor.delete');
+// Route::get('proveedor/only', 'ProveedorController@onlyProveedor')->name('proveedor.only');
+// Route::post('proveedor/update', 'ProveedorController@updateProveedor')->name('proveedor.update');
+
+//===========INICIO VALIDADO - VIEW PROVEEDOR
+
+Route::post('proveedor/save', 'ProveedorController@RegistroDatosProveedor')->name('proveedor.save');
 Route::get('proveedor/lista', 'ProveedorController@getListProveedor')->name('proveedor.list');
 Route::post('proveedor/delete', 'ProveedorController@deleteProveedor')->name('proveedor.delete');
 Route::get('proveedor/only', 'ProveedorController@onlyProveedor')->name('proveedor.only');
 Route::post('proveedor/update', 'ProveedorController@updateProveedor')->name('proveedor.update');
+
+
+Route::get('proveedor/tiposervicio', 'ProveedorController@ListarTipoServicio')->name('proveedor.tiposervicio');
+
+
+//MODAL MANTENIMIENTO PROVEEDOR
+Route::post('proveedor/saveservicio', 'ProveedorController@RegistrarServicioMantenimiento')->name('proveedor.saveservicio');
+Route::post('proveedor/updateservicio', 'ProveedorController@ActualizarServicioMantenimiento')->name('proveedor.updateservicio');
+Route::get('proveedor/listservicio', 'ProveedorController@ListarRegistroServicioDt')->name('proveedor.listservicio');
+Route::post('proveedor/deleteservicio', 'ProveedorController@EliminarSerivicioMantenimiento')->name('proveedor.deleteservicio');
+Route::get('proveedor/onlpro', 'ProveedorController@OnlyProveedorMantenimiento')->name('proveedor.onlpro');
+Route::get('proveedor/search', 'ProveedorController@BusquedaProveedorMantenimiento')->name('proveedor.search');
+//===FIN MODAL
+
+//==== FIN VALIDADO PROVEEDOR
 
 
 
