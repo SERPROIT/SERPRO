@@ -114,7 +114,7 @@ use Illuminate\Support\Facades\DB;
     public function ListarTipoServicio()
     {
         try {
-            $lstTipoServicio = DB::select('CALL sp_S_ListarTipoServicioProveedor()');
+            $lstTipoServicio = DB::select('select id,nombre from tiposervicio');
             return $lstTipoServicio;
         }
         catch (MySQLDuplicateKeyException $e) {

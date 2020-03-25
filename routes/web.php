@@ -102,3 +102,18 @@ Route::get('proveedor/search', 'ProveedorController@BusquedaProveedorMantenimien
 //===FIN MODAL
 
 //==== FIN VALIDADO PROVEEDOR
+
+//VIEW MARCACION USUARIOS - REPORTES
+Route::get('asistencia', 'AsistenciaController@index');
+
+Route::post('asistencia/save', 'AsistenciaController@RegistrarMarcacionUsuario')->name('asistencia.save');
+
+Route::post('asistencia/delete', 'AsistenciaController@deleteProveedor')->name('asistencia.delete');
+
+Route::get('asistencia/busqusuario', 'AsistenciaController@BusquedaUsuarioMarcacion')->name('asistencia.busqusuario');
+
+Route::get('asistencia/valuser', 'AsistenciaController@ValidarContrasenaUsuario')->name('asistencia.valuser');
+
+Route::get('asistencia/lista', 'AsistenciaController@HistorialMarcacionList')->name('asistencia.list');
+
+Route::get('asistencia/maestrolist', 'AsistenciaController@UsuarioMaestroList')->name('asistencia.maestrolist');

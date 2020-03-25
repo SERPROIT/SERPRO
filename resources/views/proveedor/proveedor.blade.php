@@ -698,6 +698,8 @@ debugger;
             datatype: 'JSON',
             success:function(data){
                     var lista = [];
+                    var seleccione = {id:0, text:'---SELECCIONE---'}
+                    lista[0] = seleccione
                     $.each(data, function (i, data) {
                         var option = {id:data.id,text:data.nombre}
                         lista[i] = option
@@ -713,7 +715,6 @@ debugger;
     }
 
     function RegistrarProveedor(objproveedor){
-debugger;
         $.ajax({
             url: "{{  route('proveedor.save') }}",
             type: 'POST',
