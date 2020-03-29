@@ -29,7 +29,10 @@
    
         <div class="card-body" id="cardFormularioCliente" style="display: none">
                 <input type="hidden" value="" id="accion"> 
-                <input type="hidden" value="" id="id"> 
+                <input type="hidden" value="" id="id">
+                <input type="hidden" value="" id="_cmbDepartamento">
+                <input type="hidden" value="" id="_cmbProvincia">
+                <input type="hidden" value="" id="_cmbDistrito"> 
                 <fieldset class="mb-3">
                     <legend class="text-uppercase font-size-sm font-weight-bold">REGISTRO CLIENTE</legend>
 
@@ -359,10 +362,8 @@
             if(year.trim().length > 0){
 
                 if(mes == ""){
-                    console.log('1')
                     _tblCliente.search(year).draw();
                 }else{
-                    console.log('2')
                     _tblCliente.search(year).draw();
                     _tblCliente.search(mes).draw();
                 }
@@ -370,10 +371,8 @@
             }
             if(year.trim().length == 0){
                 if(mes == ""){
-                    console.log('3')
                     _tblCliente.search(year).draw();
                 }else{
-                    console.log('4')
                     _tblCliente.search(year).draw();
                     _tblCliente.search(mes).draw();
                 }                
@@ -492,26 +491,33 @@
              $("#cardAgregarCliente").css("display", "inline")             
         });
 
-        $.ajax({    
-            type: 'GET',
-            url: "{{ URL::to('ubigeo/deparment')}}",
-            datatype: 'JSON',
-            success:function(data){
-
-                var lista = [];
-
-                $.each(data, function (i, data) {
-                    var option = {id:data.id,text:data.nombre}
-                    lista[i] = option
-                });
+        getDepartment()
+        getProvince(1)
+        getDistrict(1,101)
                 
-                $('#cmbDepartamento').select2({ data: lista });
-                getProvince($('#cmbDepartamento').val());
-            },
-            error:function(data){
-                console.log(data);
-            }
-        });
+        function getDepartment(){   
+
+            $.ajax({    
+                type: 'GET',
+                url: "{{ URL::to('ubigeo/deparment')}}",
+                datatype: 'JSON',
+                success:function(data){
+
+                    var lista = [];
+                    
+                    $.each(data, function (i, data) {
+                        var option = {id:data.id,text:data.nombre}
+                        lista[i] = option
+                    });
+                    
+                    $('#cmbDepartamento').select2({ data: lista });
+                    
+                },
+                error:function(data){
+                    console.log(data);
+                }
+            });
+        }
 
         //LISTA PUBLICIDAD
         $.ajax({    
@@ -567,17 +573,20 @@
 
         
 
-        $('#cmbDepartamento').on('change', function() {
-          
-          getProvince($(this).val())
-
+        $('#cmbDepartamento').on('change', function() { 
+           var departamento = $("#cmbDepartamento").val() 
+            getProvince(departamento)
+                          
         });
 
-        $('#cmbProvincia').on('change', function() {
-          
-          getDistrict($(this).val(),$('#cmbDepartamento').val())
-
+        $('#cmbProvincia').on('change', function() { 
+          var departamento = $('#cmbDepartamento').val()
+          var provincia =  $('#cmbProvincia').val()
+           getDistrict(provincia,departamento)
+                             
         });
+
+        
 
         function MensajeError(titulo, mensaje){
             swalInit.fire({
@@ -629,7 +638,7 @@
 
 
         function getProvince(id){
-
+            
             $.ajax({              
                 url: "{{  route('ubigeo.province') }}",
                 type: 'GET',
@@ -638,7 +647,7 @@
                 success:function(data){
                         
                         var lista = [];
-
+                        
                         $.each(data, function (i, data) {
                             
                             var option = {id:data.id,text:data.nombre}
@@ -647,8 +656,19 @@
                            
                         });
                         $('#cmbProvincia').empty();    
-                        $('#cmbProvincia').select2({ data: lista });
-                        getDistrict($('#cmbProvincia').val(),$('#cmbDepartamento').val());
+                        $('#cmbProvincia').select2({ data: lista }); 
+                        var accion = $('#accion').val()
+                        var departamento = $('#_cmbDepartamento').val()
+                        var provincia = $('#_cmbProvincia').val()
+                        if(accion != "modificar"){
+                            departamento = $('#cmbDepartamento').val()
+                            provincia = $('#cmbProvincia').val() 
+                        }
+
+                         $("#cmbProvincia").val(provincia).trigger("change")
+                         getDistrict(provincia,departamento)
+
+                        
                     },
                     error:function(data){
                         console.log(data);
@@ -657,7 +677,7 @@
         }
 
         function getDistrict(idprovince,iddepartment){
-
+            
             $.ajax({              
                 url: "{{  route('ubigeo.district') }}",
                 type: 'GET',
@@ -666,7 +686,7 @@
                 success:function(data){                   
                         
                         var lista = [];
-
+                        
                         $.each(data, function (i, data) {
                             
                             var option = {id:data.id,text:data.nombre}
@@ -676,6 +696,13 @@
                         });
                         $('#cmbDistrito').empty();    
                         $('#cmbDistrito').select2({ data: lista });
+                        var accion = $('#accion').val()
+                        var distrito = $('#_cmbDistrito').val()
+                        if(accion != "modificar"){
+                             distrito = $('#cmbDistrito').val()
+                        }
+                        $("#cmbDistrito").val(distrito).trigger('change')
+                        
 
                     },
                     error:function(data){
@@ -777,20 +804,26 @@
                 data: { 'id':id},
                 datatype: 'JSON',
                 success:function(data){                       
-                        // console.log(data);                        
+                         // console.log(data);  
+                         
+                     $("#_cmbDepartamento").val(data[0].iddepartamento)
+                     $("#_cmbProvincia").val(data[0].idprovincia)
+                     $("#_cmbDistrito").val(data[0].iddistrito)    
+
                      $("#accion").val('modificar')
                      $("#id").val(data[0].id)
                      $("input[name=nombres]").val(data[0].nombre)
+                     $("input[name=fechaingreso]").val( formatoFecha(data[0].fechaingreso))
+                     $("#cmbPublicidad").val(data[0].idpublicidad).trigger('change')
+                     $("input[name=programacionvisita]").val(data[0].programacionvisita)
+                     $("#cmbTipoCliente").val(data[0].idtipocliente).trigger('change')
                      $("#cmbDepartamento").val(data[0].iddepartamento).trigger('change')
                      $("#cmbProvincia").val(data[0].idprovincia).trigger('change')
                      $("#cmbDistrito").val(data[0].iddistrito).trigger('change')
                      $("input[name=telefono]").val(data[0].telefono)
                      $("textarea[name=direccion]").val(data[0].direccion)
-                     $("input[name=fechaingreso]").val( formatoFecha(data[0].fechaingreso))
-                     $("#cmbPublicidad").val(data[0].idpublicidad).trigger('change')
-                     $("input[name=programacionvisita]").val(data[0].programacionvisita)
-                     $("#cmbTipoCliente").val(data[0].idtipocliente).trigger('change')
-
+                     
+                        
                     },
                     error:function(data){
                         console.log(data);

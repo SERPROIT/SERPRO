@@ -62,7 +62,7 @@ class WorkerRepository
 
     public function searchWorker($usuario){
 
-         $worker = DB::select('select id from usuario where vigencia = 1 AND estado = 1 AND  usuario = ? ', [$usuario]);
+         $worker = DB::select('select id from usuario where estado = 1 AND  usuario = ? ', [$usuario]);
         
         return $worker;
     }

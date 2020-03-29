@@ -392,14 +392,11 @@
 
             var objusuario = {usuario:usuario, password:password, nombres:nombres, dni:dni, correo:correo, telefono:telefono, direccion: direccion, vigencia:vigencia, idcargo: idcargo, passwordmaestro: passwordmaestro, id: id}
 
+
             if(usuario.trim().length == 0){
                 MensajeError('Recuerda', 'Ingresar Usuario!')
                 return false
             } 
-            if(accion == "registrar"){
-                searchUsuario(usuario.trim())
-                return false
-            }
             if(password.trim().length == 0){
                 MensajeError('Recuerda', 'Ingresar Password!')
                 return false
@@ -425,15 +422,9 @@
                 return false
             }
         
-            if(accion == "registrar"){
-                RegistrarWorker(objusuario)
-            }else if(accion == "modificar"){
-                ModificarWorker(objusuario)
-            } 
+            searchUsuario(usuario.trim(), accion, objusuario)
 
-            $("#cardFormularioWorker").css("display", "none")
-            $("#cardAgregarWorker").css("display", "inline")
-            LimpiarFormulario();
+            
 
         });
 
@@ -577,6 +568,7 @@
              ObtenerWorker(id)
              $("#cardFormularioWorker").css("display", "inline")
              $("#cardAgregarWorker").css("display", "none")
+             $("input[name=usuario]").attr("disabled", true)
         });
 
 
@@ -595,6 +587,7 @@
         });
 
         $("button[name=agregar]").click(function(){
+             $("input[name=usuario]").attr("disabled", false)
              $("#accion").val("registrar")
              $("#cardFormularioWorker").css("display", "inline")
              $("#cardAgregarWorker").css("display", "none")
@@ -718,18 +711,31 @@
 
 
 
-        function searchUsuario(usuario){
+        function searchUsuario(usuario, accion, objusuario){
             $.ajax({    
                 type: 'GET',
                 url: "{{  route('worker.search') }}",
                 data: {usuario:usuario},
                 datatype: 'JSON',
                 success:function(data){
-                    
-                    if(data.length == 1){
+                    var band = false
+                    if(data.length == 1 && accion == "registrar"){
                         MensajeInformacion('Recuerda', 'Este usuario ya existe')
+                        band = true
                         return false;
                     }
+
+                    if(accion == "registrar" &&  band == false){
+                        RegistrarWorker(objusuario)
+                        $("#cardFormularioWorker").css("display", "none")
+                        $("#cardAgregarWorker").css("display", "inline")
+                        LimpiarFormulario();
+                    }else if(accion == "modificar"){
+                        ModificarWorker(objusuario)
+                        $("#cardFormularioWorker").css("display", "none")
+                        $("#cardAgregarWorker").css("display", "inline")
+                        LimpiarFormulario();
+                    } 
                     
                 },
                 error:function(data){
